@@ -2,7 +2,10 @@
 # define IRC_SERVER_HPP
 
 #include <iostream>
+#include <cstring>
 #include <sys/socket.h>
+#include <netdb.h>
+#include <stdlib.h>
 
 class IrcServer {
 
