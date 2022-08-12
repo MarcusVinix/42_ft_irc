@@ -3,7 +3,6 @@
 
 IrcServer::IrcServer( std::string host, std::string port, std::string password )
 	: _host(host), _port(port), _password(password) {
-	std::cout << "IrcServer Constructor" << std::endl;
 	this->setSocketFd();
 	return ;
 }
@@ -102,6 +101,8 @@ void	IrcServer::initPoll( void ) {
 		exit(EXIT_FAILURE);
 	}
 	this->_pollfd_vec.push_back(fd_poll);
+	std::cout << "IrcServer Listen at: \n" <<
+		this->_host << ":" << this->_port << std::endl;
 	while (loop) {
 		it_fd_poll = this->_pollfd_vec.begin();
 		if (poll(&(*it_fd_poll), this->_pollfd_vec.size(), 1000) == -1) {
@@ -117,5 +118,41 @@ void	IrcServer::initPoll( void ) {
  * 
  */
 void	IrcServer::checkPoll( void ) {
+	std::vector<pollfd>::iterator	it;
 
+
+	for (it = this->_pollfd_vec.begin(); it != this->_pollfd_vec.end(); it++) {
+		if (it->revents != 0) {
+			if (it->revents && POLLIN) {
+				this->messageReceived(it->fd);
+			}
+		}
+	}
+}
+
+void	IrcServer::messageReceived( int fd ) {
+	char				buff;
+	std::string			str;
+	struct sockaddr_in	cli_addr;
+	socklen_t			len;
+
+	len = sizeof(cli_addr);
+	int newfd = accept(fd, (struct sockaddr * )&cli_addr, &len);
+	if (newfd < 0) {
+		std::cerr << "accept: " << strerror(errno) << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	while (str.find("\n")) {
+		int	ret = recv(newfd, &buff, 1, 0);
+		if (ret < 0) {
+			continue;
+		}
+		else {
+			str += buff;
+			if (str.find("\n") != std::string::npos) {
+				std::cout << "msg: " << str << std::endl;
+				break ;
+			}
+		}
+	}
 }

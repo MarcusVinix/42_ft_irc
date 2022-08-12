@@ -12,5 +12,6 @@ int main(int argc, char **argv) {
 
 	IrcServer server(HOST, argv[1], argv[2]);
 
+	server.initPoll();
 	return (0);
 }

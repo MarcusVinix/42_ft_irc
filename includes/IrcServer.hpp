@@ -19,6 +19,7 @@ class IrcServer {
 		void	setSocketFd( void );
 		void	initPoll( void );
 		void	checkPoll( void );
+		void	messageReceived( int fd );
 
 	private:
 
