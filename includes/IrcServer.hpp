@@ -3,6 +3,8 @@
 
 #include <ft_irc.hpp>
 
+extern int	loop;
+
 class IrcServer {
 
 	public:
@@ -14,14 +16,17 @@ class IrcServer {
 		 * This socket fd will be used to create the server.
 		 * 
 		 */
-		void SetServerFd( void );
+		void	setSocketFd( void );
+		void	initPoll( void );
+		void	checkPoll( void );
 
 	private:
 
-		std::string	_host;
-		std::string	_port;
-		std::string	_password;
-		int			_server_fd;
+		std::string			_host;
+		std::string			_port;
+		std::string			_password;
+		int					_socket_fd;
+		std::vector<pollfd>	_pollfd_vec;
 };
 
 #endif

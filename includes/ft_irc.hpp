@@ -10,6 +10,9 @@
 #include <netdb.h>
 #include <stdlib.h>
 #include <unistd.h>
-
+#include <fcntl.h>
+#include <poll.h>
+#include <cerrno>
+#include <vector>
 
 #endif
