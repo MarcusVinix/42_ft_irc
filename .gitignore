@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+ircserv
+
+#vscode
+.vscode
+
+#my
+objs
+client.cpp
+server.cpp
