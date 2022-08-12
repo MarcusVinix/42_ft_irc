@@ -1,10 +1,10 @@
-SRC_DIR = ./ ./srcs ./srcs/server
+SRC_DIR = ./ ./srcs ./srcs/server ./srcs/user
 OBJ_DIR = ./obj
 INC_DIR = -I /. -I ./includes
 
-SRC = ft_irc.cpp IrcServer.cpp
+SRC = ft_irc.cpp IrcServer.cpp User.cpp
 OBJ = $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(SRC))
-INC = ft_irc.hpp IrcServer.hpp
+INC = ft_irc.hpp IrcServer.hpp User.hpp
 
 vpath %.cpp $(SRC_DIR)
 vpath %.hpp $(INC_DIR)
