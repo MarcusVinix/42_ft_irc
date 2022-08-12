@@ -93,7 +93,7 @@ void	IrcServer::setSocketFd( void ) {
  * https://man7.org/linux/man-pages/man2/poll.2.html
  */
 void	IrcServer::initPoll( void ) {
-	struct pollfd	fd_poll = { this->_socket_fd, POLLIN, 0};
+	struct pollfd	fd_poll = { this->_socket_fd, POLLIN, 0 };
 	std::vector<pollfd>::iterator	it_fd_poll;
 
 	if (fcntl(this->_socket_fd, F_SETFL, O_NONBLOCK) == -1) {
@@ -114,7 +114,11 @@ void	IrcServer::initPoll( void ) {
 }
 
 /**
- * @brief 
+ * @brief This function will check the poll fd vector,
+ * checking the if revents and POLLIN is true.
+ * If the fd off the poll is equal the server socket fd, 
+ * this mean that is a new connection(User), so we call createUser to create a new user.
+ * Otherwise this is a existing user, so we call messageReceived to get the message(command).
  * 
  */
 void	IrcServer::checkPoll( void ) {
@@ -122,37 +126,71 @@ void	IrcServer::checkPoll( void ) {
 
 
 	for (it = this->_pollfd_vec.begin(); it != this->_pollfd_vec.end(); it++) {
-		if (it->revents != 0) {
-			if (it->revents && POLLIN) {
+		if (it->revents && POLLIN) {
+			if (it->fd == this->_socket_fd)
+				this->createUser();
+			else
 				this->messageReceived(it->fd);
-			}
+			break ;
 		}
 	}
 }
 
+/**
+ * @brief This function will read the fd and get the buffer(message).
+ * About recv:
+ * https://man7.org/linux/man-pages/man2/recv.2.html
+ * @todo After read all the message(command) a function or class command will be called.
+ * @param fd to be read.
+ */
 void	IrcServer::messageReceived( int fd ) {
 	char				buff;
 	std::string			str;
-	struct sockaddr_in	cli_addr;
-	socklen_t			len;
 
-	len = sizeof(cli_addr);
-	int newfd = accept(fd, (struct sockaddr * )&cli_addr, &len);
-	if (newfd < 0) {
-		std::cerr << "accept: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-	}
 	while (str.find("\n")) {
-		int	ret = recv(newfd, &buff, 1, 0);
+		int	ret = recv(fd, &buff, 1, 0);
 		if (ret < 0) {
 			continue;
 		}
 		else {
 			str += buff;
 			if (str.find("\n") != std::string::npos) {
-				std::cout << "msg: " << str << std::endl;
+				std::cout << "fd: " << fd << "msg: " << str << std::endl;
 				break ;
 			}
 		}
 	}
+}
+
+/**
+ * @brief This function create a new User(connection).
+ * The new User is created passing a fd got by the accept function.
+ * This fd will be set to o_nonblock using fcntl.
+ * A new pollfd will be create.
+ * The new pollfd and user will be added to their respective vector.
+ * About accept:
+ * https://man7.org/linux/man-pages/man2/accept4.2.html
+ */
+void	IrcServer::createUser( void ) {
+	int					user_fd;
+	User				*newUser;
+	struct sockaddr_in	cli_addr;
+	socklen_t			len;
+
+	len = sizeof(cli_addr);
+	user_fd = accept(this->_socket_fd, (struct sockaddr *)&cli_addr, &len);
+	if (user_fd < 0) {
+		std::cerr << "accept: " << strerror(errno) << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	pollfd user_poll_fd = { user_fd, POLLIN, 0 };
+	if (fcntl(user_fd, F_SETFL, O_NONBLOCK) == -1) {
+		std::cerr << "createUser: fcntl: " << strerror(errno) << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	newUser = new User(user_fd);
+	this->_users_vec.push_back(newUser);
+	this->_pollfd_vec.push_back(user_poll_fd);
+	std::cout << "New User: " << user_fd << std::endl;
+	return ;
 }

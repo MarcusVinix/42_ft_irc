@@ -12,10 +12,8 @@ class User {
 
 		void		setNick( std::string nick );
 		void		setUsername( std::string username );
-		void		setPassword( std::string password );
 		std::string	getNick( void );
 		std::string	getUsername( void );
-		std::string	getPassword( void );
 		
 
 	private:
@@ -23,7 +21,6 @@ class User {
 		int			_user_fd;
 		std::string	_nick;
 		std::string	_username;
-		std::string	_password;
 
 };
 

@@ -1,9 +1,12 @@
 #ifndef IRC_SERVER_HPP
 # define IRC_SERVER_HPP
 
-#include <ft_irc.hpp>
+#include "ft_irc.hpp"
+#include "User.hpp"
 
 extern int	loop;
+
+class User;
 
 class IrcServer {
 
@@ -20,6 +23,7 @@ class IrcServer {
 		void	initPoll( void );
 		void	checkPoll( void );
 		void	messageReceived( int fd );
+		void	createUser( void );
 
 	private:
 
@@ -28,6 +32,7 @@ class IrcServer {
 		std::string			_password;
 		int					_socket_fd;
 		std::vector<pollfd>	_pollfd_vec;
+		std::vector<User *>	_users_vec;
 };
 
 #endif
