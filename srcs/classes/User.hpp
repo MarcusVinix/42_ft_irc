@@ -20,6 +20,7 @@ class User {
 		void		setNick( std::string nick );
 		std::string	getUsername( void );
 		void		setUsername( std::string username );
+		int			getFd( void );
 
 };
 

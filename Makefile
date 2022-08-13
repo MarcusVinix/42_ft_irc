@@ -2,9 +2,9 @@ SRC_DIR = ./srcs ./srcs/classes
 OBJ_DIR = ./obj
 INC_DIR = -I ./includes -I ./srcs/classes
 
-SRC = ft_irc.cpp IrcServer.cpp User.cpp Channel.cpp
+SRC = ft_irc.cpp IrcServer.cpp User.cpp Channel.cpp Command.cpp
 OBJ = $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(SRC))
-INC = ft_irc.hpp IrcServer.hpp User.hpp Channel.hpp
+INC = ft_irc.hpp IrcServer.hpp User.hpp Channel.hpp Command.hpp
 
 vpath %.cpp $(SRC_DIR)
 vpath %.hpp $(INC_DIR)

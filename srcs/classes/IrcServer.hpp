@@ -2,6 +2,7 @@
 # define IRC_SERVER_HPP
 
 #include "User.hpp"
+#include "Command.hpp"
 
 class IrcServer {
 
@@ -29,7 +30,9 @@ class IrcServer {
 		void	checkPoll( void );
 		void	messageReceived( int fd );
 		void	createUser( void );
+		User	*getUserByFd( int fd );
 
 };
+
 
 #endif

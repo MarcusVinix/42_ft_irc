@@ -164,6 +164,7 @@ void	IrcServer::messageReceived( int fd ) {
 			str += buff;
 			if (str.find("\n") != std::string::npos) {
 				std::cout << "fd: " << fd << "  -  msg: " << str << std::endl;
+				Command command(str, fd, *this);
 				break ;
 			}
 		}
@@ -206,5 +207,17 @@ void	IrcServer::createUser( void ) {
 	std::cout << "New User: " << userFd << std::endl;
 
 	return ;
+
+}
+
+User	*IrcServer::getUserByFd( int fd ) {
+
+	std::vector<User *>::iterator	it = this->_usersVec.begin();
+
+	for ( ; it != this->_usersVec.end(); it++) {
+		if ((*it)->getFd() == fd)
+			return (*it);
+	}
+	return (NULL);
 
 }

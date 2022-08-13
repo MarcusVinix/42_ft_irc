@@ -15,5 +15,6 @@
 #include <poll.h>
 #include <cerrno>
 #include <vector>
+#include <algorithm>
 
 #endif

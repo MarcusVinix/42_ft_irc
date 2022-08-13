@@ -24,3 +24,7 @@ std::string	User::getUsername( void ) {
 void	User::setUsername( std::string username ) {
 	this->_username = username;
 }
+
+int	User::getFd( void ) {
+	return (this->_userFd);
+}
