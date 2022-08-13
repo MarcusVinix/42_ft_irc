@@ -1,7 +1,5 @@
 #include "IrcServer.hpp"
 
-int	loop = 1;
-
 int	main( int argc, char **argv ) {
 
 	if (argc != 3) {
@@ -9,7 +7,7 @@ int	main( int argc, char **argv ) {
 		return (1);
 	}
 
-	IrcServer server(HOST, argv[1], argv[2]);
+	IrcServer	server(HOST, argv[1], argv[2]);
 
 	server.initPoll();
 

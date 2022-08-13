@@ -3,8 +3,6 @@
 
 #include "User.hpp"
 
-extern int	loop;
-
 class IrcServer {
 
 	private:

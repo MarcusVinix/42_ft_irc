@@ -97,7 +97,7 @@ void	IrcServer::setSocketFd( void ) {
  */
 void	IrcServer::initPoll( void ) {
 
-	struct pollfd	pollFd = { this->_socketFd, POLLIN, 0 };
+	struct pollfd					pollFd = { this->_socketFd, POLLIN, 0 };
 	std::vector<pollfd>::iterator	it;
 
 	if (fcntl(this->_socketFd, F_SETFL, O_NONBLOCK) == -1) {
@@ -109,7 +109,7 @@ void	IrcServer::initPoll( void ) {
 	std::cout << "IrcServer Listen at: \n" <<
 		this->_host << ":" << this->_port << std::endl;
 
-	while (loop) {
+	while (LOOP) {
 		it = this->_pollFdVec.begin();
 		if (poll(&(*it), this->_pollFdVec.size(), 1000) == -1) {
 			std::cerr << "poll: " << strerror(errno) << std::endl;
@@ -155,17 +155,15 @@ void	IrcServer::messageReceived( int fd ) {
 
 	char		buff;
 	std::string	str;
-	int			exitCode;
 
 	while (str.find("\n")) {
-		exitCode = recv(fd, &buff, 1, 0);
-		if (exitCode < 0) {
+		if (recv(fd, &buff, 1, 0) < 0) {
 			continue;
 		}
 		else {
 			str += buff;
 			if (str.find("\n") != std::string::npos) {
-				std::cout << "fd: " << fd << "msg: " << str << std::endl;
+				std::cout << "fd: " << fd << "  -  msg: " << str << std::endl;
 				break ;
 			}
 		}
