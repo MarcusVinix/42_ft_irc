@@ -1,10 +1,10 @@
-SRC_DIR = ./ ./srcs ./srcs/server
+SRC_DIR = ./srcs ./srcs/classes
 OBJ_DIR = ./obj
-INC_DIR = -I /. -I ./includes
+INC_DIR = -I ./includes -I ./srcs/classes
 
-SRC = ft_irc.cpp IrcServer.cpp
+SRC = ft_irc.cpp IrcServer.cpp User.cpp Channel.cpp Command.cpp
 OBJ = $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(SRC))
-INC = ft_irc.hpp IrcServer.hpp
+INC = ft_irc.hpp IrcServer.hpp User.hpp Channel.hpp Command.hpp
 
 vpath %.cpp $(SRC_DIR)
 vpath %.hpp $(INC_DIR)
@@ -34,7 +34,7 @@ $(OBJ_DIR)/%.o: %.cpp $(INC)
 #_________________________/\__________________________#
 
 run: $(NAME)
-	./$(NAME) 3000 123
+	./$(NAME) 6667 123
 
 #_________________________/\__________________________#
 
@@ -58,4 +58,9 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+git:
+	@git add .
+	@git status
+	@git commit -m "$m"
+
+.PHONY: all clean fclean re git

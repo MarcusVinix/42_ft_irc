@@ -3,6 +3,7 @@
 
 # define LISTEN_BACKLOG 50
 # define HOST "127.0.0.1"
+# define LOOP 1
 
 #include <iostream>
 #include <cstring>
@@ -14,5 +15,7 @@
 #include <poll.h>
 #include <cerrno>
 #include <vector>
+#include <algorithm>
+#include <cctype>
 
 #endif
