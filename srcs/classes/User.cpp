@@ -9,6 +9,20 @@ User::~User( void ) {
 	return ;
 }
 
+void	User::receiveMessage( std::string msg ) {
+
+	int	exitCode;
+
+	exitCode = send(getFd(), msg.c_str(), strlen(msg.c_str()), 0);
+	if (exitCode < 0) {
+		std::cerr << "receiveMessage: send: " << strerror(errno) << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	return ;
+
+}
+
+
 std::string	User::getNick( void ) {
 	return (this->_nick);
 }

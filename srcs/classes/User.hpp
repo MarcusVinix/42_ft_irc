@@ -20,6 +20,8 @@ class User {
 		User( int userFd );
 		~User( void );
 
+		void	receiveMessage( std::string msg );
+
 		std::string	getNick( void );
 		void		setNick( std::string nick );
 		std::string	getUsername( void );

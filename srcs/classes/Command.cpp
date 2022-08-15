@@ -57,6 +57,12 @@ void	Command::parserBuffer( std::string buffer ) {
  * This function will check what command is and
  * call the right function to execute it.
  * If some error is found a numeric response will be send.
+ * 
+ * about commands:
+ * https://simple.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands
+ * 
+ * about numericResponse:
+ * https://www.alien.net.au/irc/irc2numerics.html
  */
 void	Command::checkCommand( void ) {
 
@@ -69,7 +75,8 @@ void	Command::checkCommand( void ) {
 			if (this->_command == "USER")
 				commandUser();
 			else if (this->_user.getUsername().empty() == false) {
-
+				if (this->_command == "PRIVMSG")
+					commandPrivmsg();
 			}
 			else
 				return (numericResponse("A user must be provide: usage: /USER <username> <hostname> <servername> <realname>", "431"));
@@ -161,6 +168,25 @@ void	Command::commandUser( void ) {
 
 }
 
+void	Command::commandPrivmsg( void ) {
+
+	User		*receive;
+	std::string	msg;
+
+	if (this->_args.size() == 0)
+		return (numericResponse("A nick must be provide!", "411"));
+	if (this->_args.size() == 1)
+		return (numericResponse("A message must be provide!", "412"));
+
+	receive = this->_ircServer.getUserByNick(this->_args[0]);
+	if (receive == NULL)
+		return (numericResponse("Nick not found!", "401"));
+	msg = ft_join_split(this->_args);
+	receive->receiveMessage(msg);
+	return ;
+
+}
+
 /**
  * @brief Function to send numeric response of success and fail to the user.
  * 
@@ -201,6 +227,19 @@ std::vector<std::string>	Command::ft_split( std::string str, char c) {
 	if (buff != "")
 		split.push_back(buff);
 	return (split);
+
+}
+
+std::string	Command::ft_join_split( std::vector<std::string> args ) {
+
+	std::string							msg;
+	std::vector<std::string>::iterator	it = args.begin() + 1;
+
+	for ( ; it != args.end(); it++) {
+		msg += *it + " ";
+	}
+	
+	return (msg);
 
 }
 

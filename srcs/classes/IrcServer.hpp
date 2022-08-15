@@ -26,6 +26,7 @@ class IrcServer {
 		void				messageAllUsers( std::string msg );
 		void				createUser( void );
 		User				*getUserByFd( int fd );
+		User				*getUserByNick( std::string nick );
 		void				setSocketFd( void );
 		int					getSocketFd( void );
 		std::string			getPassword( void );

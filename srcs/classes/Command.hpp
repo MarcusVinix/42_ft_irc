@@ -26,9 +26,11 @@ class Command {
 		void						commandPass( void );
 		void						commandNick( void );
 		void						commandUser( void );
+		void						commandPrivmsg( void );
 
 		std::string					ft_toupper( std::string str );
 		std::vector<std::string>	ft_split( std::string str, char c);
+		std::string					ft_join_split( std::vector<std::string> args );
 		bool						invalidCharacter( std::string str );
 
 };

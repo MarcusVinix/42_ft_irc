@@ -222,6 +222,19 @@ User	*IrcServer::getUserByFd( int fd ) {
 
 }
 
+User	*IrcServer::getUserByNick( std::string nick ) {
+	
+	std::vector<User *>::iterator	it = this->_usersVec.begin();
+
+	for ( ; it != this->_usersVec.end(); it++) {
+		if ((*it)->getNick() == nick)
+			return (*it);
+	}
+	return (NULL);
+
+}
+
+
 std::string	IrcServer::getPassword( void ) {
 	return (this->_password);
 }
