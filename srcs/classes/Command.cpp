@@ -13,7 +13,7 @@ Command::Command( std::string buffer, int userFd, IrcServer & ircServer )
 
 	parserBuffer(buffer);
 	checkCommand();
-	return;
+	return ;
 
 }
 
@@ -31,16 +31,19 @@ Command::~Command( void ) {
  */
 void	Command::parserBuffer( std::string buffer ) {
 	
-	buffer.erase(buffer.end() - 1);
+	if (buffer[0] == '/')
+		buffer.erase(0, 1);
+	buffer.erase(std::remove(buffer.begin(), buffer.end(), '\n'), buffer.end());
+	buffer.erase(std::remove(buffer.begin(), buffer.end(), '\r'), buffer.end());
+
 	this->_args = ft_split(buffer, ' ');
 	if (this->_args.size() == 0)
 		return ;
 
 	this->_command = ft_toupper(*this->_args.begin());
-	if (this->_command[0] == '/')
-		this->_command.erase(0, 1);
 	this->_args.erase(this->_args.begin());
-
+	if (this->_args[0][0] == ':')
+		this->_args[0].erase(0, 1);
 	// If want to check if its everything okay just run this code.
 	// std::vector<std::string>::iterator it;
 	// for (it = this->_args.begin(); it != this->_args.end(); it++)
@@ -66,6 +69,8 @@ void	Command::parserBuffer( std::string buffer ) {
  */
 void	Command::checkCommand( void ) {
 
+	if (this->_command == "CAP")
+		return (numericResponse("CAP * ACK multi-prefix", ""));
 	if (this->_command == "PASS")
 		commandPass();
 	else if (this->_user.isAuth()){
@@ -96,8 +101,10 @@ void	Command::checkCommand( void ) {
  * After that the user can use the server normally.
  * 
  */
+#include <cstdio>
 void	Command::commandPass( void ) {
 
+	printf("|%s|\n", this->_args[0].c_str());
 	if (this->_user.isAuth())
 		return (numericResponse("User already registered!", "462"));
 	if (this->_args.empty() || this->_args.size() != 1)
@@ -154,7 +161,7 @@ void	Command::commandNick( void ) {
  */
 void	Command::commandUser( void ) {
 
-	if (this->_args.size() < 4)
+	if (this->_args.size() != 4)
 		return (numericResponse("usage: /USER <username> <hostname> <servername> <realname>", "461"));
 	if (this->_user.getUsername().empty() == false)
 		return (numericResponse("You are already register!", "462"));
@@ -172,6 +179,7 @@ void	Command::commandPrivmsg( void ) {
 
 	User		*receive;
 	std::string	msg;
+	std::string	response;
 
 	if (this->_args.size() == 0)
 		return (numericResponse("A nick must be provide!", "411"));
@@ -182,7 +190,8 @@ void	Command::commandPrivmsg( void ) {
 	if (receive == NULL)
 		return (numericResponse("Nick not found!", "401"));
 	msg = ft_join_split(this->_args);
-	receive->receiveMessage(msg);
+	response = ":" + this->_user.getNick() + " PRIVMSG " + receive->getNick() + " :" + msg;
+	receive->receiveMessage(response);
 	return ;
 
 }
@@ -201,7 +210,7 @@ void	Command::numericResponse( std::string msg, std::string code ) {
 
 	if (nick.empty())
 		nick = "Unknown";
-	response = nick + ": " + code + ": " + msg + "\n";
+	response = nick + ": " + code + ": " + msg + "\r\n";
 	exitCode = send(this->_user.getFd(), response.c_str(), strlen(response.c_str()), 0);
 	if (exitCode < 0) {
 		std::cerr << "numericResponse: send: " << strerror(errno) << std::endl;
