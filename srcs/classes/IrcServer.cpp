@@ -221,3 +221,31 @@ User	*IrcServer::getUserByFd( int fd ) {
 	return (NULL);
 
 }
+
+std::string	IrcServer::getPassword( void ) {
+	return (this->_password);
+}
+
+std::vector<User *>	IrcServer::getUsers( void ) {
+	return (this->_usersVec);
+}
+
+int	IrcServer::getSocketFd( void ) {
+	return (this->_socketFd);
+}
+
+void	IrcServer::messageAllUsers( std::string msg ) {
+
+	int								exitCode;
+	std::vector<User *>::iterator	it = this->_usersVec.begin();
+
+	for( ; it != this->_usersVec.end(); it++) {
+		exitCode = send((*it)->getFd(), msg.c_str(), strlen(msg.c_str()), 0);
+		if (exitCode < 0) {
+			std::cerr << "messageAllUsers: send: " << strerror(errno) << std::endl;
+			exit(EXIT_FAILURE);
+		}
+	}
+	return ;
+
+}

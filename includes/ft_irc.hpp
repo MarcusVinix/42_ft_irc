@@ -16,5 +16,6 @@
 #include <cerrno>
 #include <vector>
 #include <algorithm>
+#include <cctype>
 
 #endif

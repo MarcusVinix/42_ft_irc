@@ -20,8 +20,16 @@ class Command {
 		~Command( void );
 
 		void						parserBuffer( std::string buffer );
+		void						checkCommand( void );
+		void						numericResponse( std::string msg, std::string code );
+
+		void						commandPass( void );
+		void						commandNick( void );
+		void						commandUser( void );
+
 		std::string					ft_toupper( std::string str );
 		std::vector<std::string>	ft_split( std::string str, char c);
+		bool						invalidCharacter( std::string str );
 
 };
 

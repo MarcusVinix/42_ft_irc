@@ -20,17 +20,16 @@ class IrcServer {
 		IrcServer( std::string host, std::string port, std::string password );
 		~IrcServer( void );
 
-		/**
-		 * @brief This function will create the socket fd.
-		 * This socket fd will be used to create the server.
-		 *
-		 */
-		void	setSocketFd( void );
-		void	initPoll( void );
-		void	checkPoll( void );
-		void	messageReceived( int fd );
-		void	createUser( void );
-		User	*getUserByFd( int fd );
+		void				initPoll( void );
+		void				checkPoll( void );
+		void				messageReceived( int fd );
+		void				messageAllUsers( std::string msg );
+		void				createUser( void );
+		User				*getUserByFd( int fd );
+		void				setSocketFd( void );
+		int					getSocketFd( void );
+		std::string			getPassword( void );
+		std::vector<User *>	getUsers( void );
 
 };
 
