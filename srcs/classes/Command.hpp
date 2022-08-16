@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Command.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:57 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 04:37:21 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 12:07:13 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "IrcServer.hpp"
 #include "Utils.hpp"
+#include "Channel.hpp"
 
 class IrcServer;
 
@@ -32,15 +33,16 @@ class Command {
 		Command( std::string buffer, int userFd, IrcServer & ircServer );
 		~Command( void );
 
-		void						parserBuffer( std::string buffer );
-		void						checkCommand( void );
-		void						numericResponse( std::string msg, std::string code );
+		void	parserBuffer( std::string buffer );
+		void	checkCommand( void );
+		void	numericResponse( std::string msg, std::string code, std::string opt = "" );
 
-		void						commandPass( void );
-		void						commandNick( void );
-		void						commandUser( void );
-		void						commandPrivmsg( void );
-		void						commandQuit( void );
+		void	commandPass( void );
+		void	commandNick( void );
+		void	commandUser( void );
+		void	commandPrivmsg( void );
+		void	commandQuit( void );
+		void	commandJoin( void );
 
 };
 

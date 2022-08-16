@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:34 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 14:29:17 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 12:13:19 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,19 @@ std::string	Utils::joinSplit( std::vector<std::string> args ) {
 
 }
 
+std::string	Utils::joinSplit( std::vector<User *> users ) {
+
+	std::string							msg;
+	std::vector<User *>::iterator	it = users.begin() + 1;
+
+	for ( ; it != users.end(); it++) {
+		msg += (*it)->getNick() + " ";
+	}
+
+	return (msg);
+
+}
+
 std::string	Utils::toupper( std::string str ) {
 
 	for (int i = 0; str[i] != '\0'; i++)
@@ -70,7 +83,7 @@ bool	Utils::invalidCharacter( std::string str ) {
 
 }
 
-void	Utils::errorMessager( std::string function,	std::string error) {
+void	Utils::errorMessage( std::string function,	std::string error) {
 
 	std::cerr << function << " " << error << std::endl;
 	exit(EXIT_FAILURE);

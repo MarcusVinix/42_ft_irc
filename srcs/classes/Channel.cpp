@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:05:09 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 14:58:47 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 11:20:35 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	Channel::messageFromChannel( std::string msg ) {
 
 	for ( ; it != this->_users.end(); it++)
 		if (send((*it)->getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0)
-			Utils::errorMessager("messageFromChannel: send:", strerror(errno));
+			Utils::errorMessage("messageFromChannel: send:", strerror(errno));
 
 	return ;
 
@@ -95,7 +95,7 @@ void	Channel::messageToChannel( std::string msg, int senderFd ) {
 	for ( ; it != this->_users.end(); it++)
 		if ((*it)->getFd() != senderFd)
 			if (send((*it)->getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0)
-				Utils::errorMessager("messageToChannel: send:", strerror(errno));
+				Utils::errorMessage("messageToChannel: send:", strerror(errno));
 
 	return ;
 
