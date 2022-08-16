@@ -1,10 +1,22 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2022/08/16 04:03:12 by Barney e Se       #+#    #+#              #
+#    Updated: 2022/08/16 04:03:41 by Barney e Se      ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 SRC_DIR = ./srcs ./srcs/classes
 OBJ_DIR = ./obj
 INC_DIR = -I ./includes -I ./srcs/classes
 
-SRC = ft_irc.cpp IrcServer.cpp User.cpp Channel.cpp Command.cpp
+SRC = ft_irc.cpp IrcServer.cpp User.cpp Channel.cpp Command.cpp Utils.cpp
 OBJ = $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(SRC))
-INC = ft_irc.hpp IrcServer.hpp User.hpp Channel.hpp Command.hpp
+INC = ft_irc.hpp IrcServer.hpp User.hpp Channel.hpp Command.hpp Utils.hpp
 
 vpath %.cpp $(SRC_DIR)
 vpath %.hpp $(INC_DIR)

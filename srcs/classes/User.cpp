@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   User.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/08/16 04:04:41 by Barney e Se       #+#    #+#             */
+/*   Updated: 2022/08/16 04:04:42 by Barney e Se      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "User.hpp"
 
 User::User( int userFd )
@@ -11,12 +23,10 @@ User::~User( void ) {
 
 void	User::receiveMessage( std::string msg ) {
 
-	int	exitCode;
+	if (msg.find("\r\n") == std::string::npos)
+		msg += "\r\n";
 
-	msg += "\r\n";
-	std::cout << "response: " << msg << std::endl;
-	exitCode = send(getFd(), msg.c_str(), strlen(msg.c_str()), 0);
-	if (exitCode < 0) {
+	if (send(getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0) {
 		std::cerr << "receiveMessage: send: " << strerror(errno) << std::endl;
 		exit(EXIT_FAILURE);
 	}
@@ -24,6 +34,17 @@ void	User::receiveMessage( std::string msg ) {
 
 }
 
+int	User::getFd( void ) {
+	return (this->_userFd);
+}
+
+void	User::auth( void ) {
+	this->_auth = true;
+}
+
+bool	User::isAuth( void ) {
+	return (this->_auth);
+}
 
 std::string	User::getNick( void ) {
 	return (this->_nick);
@@ -61,16 +82,4 @@ std::string	User::getHostname( void ) {
 
 void	User::setHostname( std::string hostname ) {
 	this->_hostname = hostname;
-}
-
-int	User::getFd( void ) {
-	return (this->_userFd);
-}
-
-void	User::auth( void ) {
-	this->_auth = true;
-}
-
-bool	User::isAuth( void ) {
-	return (this->_auth);
 }
