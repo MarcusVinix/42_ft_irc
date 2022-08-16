@@ -6,26 +6,27 @@
 /*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:46 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 14:14:55 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 15:20:41 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef IRC_SERVER_HPP
 # define IRC_SERVER_HPP
 
-#include "User.hpp"
+#include "Channel.hpp"
 #include "Command.hpp"
 
 class IrcServer {
 
 	private:
 
-		std::string			_host;
-		std::string			_port;
-		std::string			_password;
-		int					_socketFd;
-		std::vector<pollfd>	_pollFdVec;
-		std::vector<User*>	_usersVec;
+		std::string				_host;
+		std::string				_port;
+		std::string				_password;
+		int						_socketFd;
+		std::vector<pollfd>		_pollFdVec;
+		std::vector<User*>		_usersVec;
+		std::vector<Channel*>	_channelsVec;
 
 	public:
 
@@ -40,16 +41,19 @@ class IrcServer {
 
 	public:
 
-		void				initPoll( void );
-		void				messageAllUsers( std::string msg );
-		void				deleteUser( int fd );
+		void					initPoll( void );
+		void					messageAllUsers( std::string msg );
+		void					deleteUser( int fd );
+		void					addChannel( Channel *channel );
 
-		int					getSocketFd( void );
-		void				setSocketFd( void );
-		User				*getUserByFd( int fd );
-		User				*getUserByNick( std::string nick );
-		std::string			getPassword( void );
-		std::vector<User *>	getUsers( void );
+		int						getSocketFd( void );
+		void					setSocketFd( void );
+		std::vector<User *>		getUsers( void );
+		User					*getUserByNick( std::string nick );
+		User					*getUserByFd( int fd );
+		std::string				getPassword( void );
+		std::vector<Channel *>	getChannels( void );
+		Channel*				getChannelByName( std::string name );
 
 };
 

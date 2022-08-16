@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:51 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 14:36:46 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 15:25:43 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,10 @@ void	IrcServer::deleteUser( int fd ) {
 	}
 }
 
+void	IrcServer::addChannel( Channel *channel ) {
+	this->_channelsVec.push_back(channel);
+}
+
 int	IrcServer::getSocketFd( void ) {
 	return (this->_socketFd);
 }
@@ -141,9 +145,9 @@ void	IrcServer::setSocketFd( void ) {
 	}
 
 	freeaddrinfo(resultList);
-	if (lst == NULL) {
+	if (lst == NULL)
 		Utils::errorMessager("bind:", gai_strerror(exitCode));
-	}
+
 
 	exitCode = listen(serverFd, LISTEN_BACKLOG);
 	if (exitCode == -1)
@@ -158,10 +162,10 @@ User	*IrcServer::getUserByFd( int fd ) {
 
 	std::vector<User *>::iterator	it = this->_usersVec.begin();
 
-	for ( ; it != this->_usersVec.end(); it++) {
+	for ( ; it != this->_usersVec.end(); it++)
 		if ((*it)->getFd() == fd)
 			return (*it);
-	}
+
 	return (NULL);
 
 }
@@ -170,10 +174,10 @@ User	*IrcServer::getUserByNick( std::string nick ) {
 
 	std::vector<User *>::iterator	it = this->_usersVec.begin();
 
-	for ( ; it != this->_usersVec.end(); it++) {
+	for ( ; it != this->_usersVec.end(); it++)
 		if ((*it)->getNick() == nick)
 			return (*it);
-	}
+
 	return (NULL);
 
 }
@@ -269,5 +273,24 @@ void	IrcServer::_messageReceived( int fd ) {
 			}
 		}
 	}
+
+}
+
+std::vector<Channel *>	IrcServer::getChannels( void ) {
+	return (this->_channelsVec);
+}
+
+Channel*	IrcServer::getChannelByName( std::string name ) {
+
+	std::vector<Channel *>::iterator	it = this->_channelsVec.begin();
+
+	if (name[0] != '#')
+		name = "#" + name;
+
+	for ( ; it != this->_channelsVec.end(); it++)
+		if ((*it)->getName() == name)
+			return (*it);
+
+	return (NULL);
 
 }
