@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:05:06 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 09:46:59 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 12:05:07 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 #include "ft_irc.hpp"
 #include "User.hpp"
+
+class User;
 
 class Channel {
 

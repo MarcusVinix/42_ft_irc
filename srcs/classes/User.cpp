@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:41 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 14:31:04 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 11:20:35 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	User::receiveMessage( std::string msg ) {
 		msg += "\r\n";
 
 	if (send(getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0)
-		Utils::errorMessager("receiveMessage: send:", strerror(errno));
+		Utils::errorMessage("receiveMessage: send:", strerror(errno));
 
 	return ;
 
@@ -81,4 +81,37 @@ std::string	User::getHostname( void ) {
 
 void	User::setHostname( std::string hostname ) {
 	this->_hostname = hostname;
+}
+
+std::vector<Channel *>	User::getChannels( void ) {
+	return (this->_channelsVec);
+}
+
+void					User::addChannel( Channel * channel ) {
+
+	std::vector<Channel *>::iterator	it = this->_channelsVec.begin();
+
+	for ( ; it != this->_channelsVec.end(); it++)
+		if ((*it)->getName() == channel->getName())
+			return ;
+	this->_channelsVec.push_back(channel);
+	channel->addUser(this);
+
+	return ;
+
+}
+
+void	User::removeChannel( Channel * channel ) {
+
+	std::vector<Channel *>::iterator	it = this->_channelsVec.begin();
+
+	for ( ; it != this->_channelsVec.end(); it++) {
+		if (*it == channel) {
+			this->_channelsVec.erase(it);
+			return ;
+		}
+	}
+
+	return ;
+
 }

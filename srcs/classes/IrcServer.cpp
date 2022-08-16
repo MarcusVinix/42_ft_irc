@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IrcServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:51 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 15:25:43 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 11:20:35 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	IrcServer::initPoll( void ) {
 	std::vector<pollfd>::iterator	it;
 
 	if (fcntl(this->_socketFd, F_SETFL, O_NONBLOCK) == -1)
-		Utils::errorMessager("fcntl:", strerror(errno));
+		Utils::errorMessage("fcntl:", strerror(errno));
 
 	this->_pollFdVec.push_back(pollFd);
 	std::cout << "IrcServer Listen at: \n" <<
@@ -48,7 +48,7 @@ void	IrcServer::initPoll( void ) {
 	while (LOOP) {
 		it = this->_pollFdVec.begin();
 		if (poll(&(*it), this->_pollFdVec.size(), 1000) == -1)
-			Utils::errorMessager("poll:", strerror(errno));
+			Utils::errorMessage("poll:", strerror(errno));
 		this->_checkPoll();
 	}
 
@@ -63,7 +63,7 @@ void	IrcServer::messageAllUsers( std::string msg ) {
 
 	for( ; it != this->_usersVec.end(); it++)
 		if (send((*it)->getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0)
-			Utils::errorMessager("messageAllUsers: send:", strerror(errno));
+			Utils::errorMessage("messageAllUsers: send:", strerror(errno));
 
 	return ;
 
@@ -72,10 +72,13 @@ void	IrcServer::messageAllUsers( std::string msg ) {
 void	IrcServer::deleteUser( int fd ) {
 
 	std::vector<User *>::iterator	it = this->_usersVec.begin();
+	User	*user;
 
 	for ( ; it != this->_usersVec.end(); it++) {
 		if ((*it)->getFd() == fd) {
+			user = *it;
 			this->_usersVec.erase(it);
+			delete user;
 			break ;
 		}
 	}
@@ -124,7 +127,7 @@ void	IrcServer::setSocketFd( void ) {
 
 	exitCode = getaddrinfo(this->_host.c_str(), this->_port.c_str(), &hints, &resultList);
 	if (exitCode != 0)
-		Utils::errorMessager("getaddrinfo:", gai_strerror(exitCode));
+		Utils::errorMessage("getaddrinfo:", gai_strerror(exitCode));
 
 	lst = resultList;
 	while (lst) {
@@ -135,7 +138,7 @@ void	IrcServer::setSocketFd( void ) {
 		if (exitCode != 0) {
 			close(serverFd);
 			freeaddrinfo(resultList);
-			Utils::errorMessager("setsockopt:", gai_strerror(exitCode));
+			Utils::errorMessage("setsockopt:", gai_strerror(exitCode));
 		}
 		exitCode = bind(serverFd, lst->ai_addr, lst->ai_addrlen);
 		if (exitCode == 0)
@@ -146,12 +149,12 @@ void	IrcServer::setSocketFd( void ) {
 
 	freeaddrinfo(resultList);
 	if (lst == NULL)
-		Utils::errorMessager("bind:", gai_strerror(exitCode));
+		Utils::errorMessage("bind:", gai_strerror(exitCode));
 
 
 	exitCode = listen(serverFd, LISTEN_BACKLOG);
 	if (exitCode == -1)
-		Utils::errorMessager("listen:", gai_strerror(exitCode));
+		Utils::errorMessage("listen:", gai_strerror(exitCode));
 
 	this->_socketFd = serverFd;
 
@@ -233,11 +236,11 @@ void	IrcServer::_createUser( void ) {
 	len = sizeof(cli_addr);
 	userFd = accept(this->_socketFd, (struct sockaddr *)&cli_addr, &len);
 	if (userFd < 0)
-		Utils::errorMessager("accept:", strerror(errno));
+		Utils::errorMessage("accept:", strerror(errno));
 
 	pollfd	userPollFd = { userFd, POLLIN, 0 };
 	if (fcntl(userFd, F_SETFL, O_NONBLOCK) == -1)
-		Utils::errorMessager("createUser: fcntl:", strerror(errno));
+		Utils::errorMessage("createUser: fcntl:", strerror(errno));
 
 	newUser = new User(userFd);
 	this->_usersVec.push_back(newUser);
