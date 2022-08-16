@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:05:01 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 04:13:02 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 14:38:51 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,10 +116,9 @@ void	Command::numericResponse( std::string msg, std::string code ) {
 		nick = "Unknown";
 	response = nick + ": " + code + ": " + msg + "\r\n";
 
-	if (send(this->_user.getFd(), response.c_str(), strlen(response.c_str()), 0) < 0) {
-		std::cerr << "numericResponse: send: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	if (send(this->_user.getFd(), response.c_str(), strlen(response.c_str()), 0) < 0)
+		Utils::errorMessager("numericResponse: send:", strerror(errno));
+
 	return ;
 
 }
@@ -154,7 +153,6 @@ void	Command::commandPass( void ) {
  */
 void	Command::commandNick( void ) {
 
-	std::vector<User *>			usersVec;
 	std::vector<User *>::iterator	it;
 
 	if (this->_args.size() != 1)
@@ -166,9 +164,8 @@ void	Command::commandNick( void ) {
 	if (Utils::invalidCharacter(this->_args[0]))
 		return (numericResponse("This nick contain invalids characters!", "432"));
 
-	usersVec = this->_ircServer.getUsers();
-	it = usersVec.begin();
-	for( ; it != usersVec.end(); it++) {
+	it = this->_ircServer.getUsers().begin();
+	for( ; it != this->_ircServer.getUsers().end(); it++) {
 		if (this->_args[0] == (*it)->getNick())
 			return (numericResponse("This nick is already in use!", "433"));
 	}
@@ -222,4 +219,15 @@ void	Command::commandPrivmsg( void ) {
 	return ;
 
 }
-//:USER COMAND :MSG
+
+void	Command::commandQuit( void ) {
+
+	std::string	response;
+
+	response = ":" + this->_user.getNick() + " QUIT :" + Utils::joinSplit(this->_args);
+
+	this->_ircServer.messageAllUsers(response);
+	this->_ircServer.deleteUser(this->_user.getFd());
+
+	return ;
+}

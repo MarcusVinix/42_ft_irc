@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:41 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 04:04:42 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 14:31:04 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,9 @@ void	User::receiveMessage( std::string msg ) {
 	if (msg.find("\r\n") == std::string::npos)
 		msg += "\r\n";
 
-	if (send(getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0) {
-		std::cerr << "receiveMessage: send: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	if (send(getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0)
+		Utils::errorMessager("receiveMessage: send:", strerror(errno));
+
 	return ;
 
 }

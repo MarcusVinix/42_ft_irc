@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:38 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 04:04:39 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 14:30:54 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define USER_HPP
 
 #include "ft_irc.hpp"
+#include "Utils.hpp"
 
 class User {
 

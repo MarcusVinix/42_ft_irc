@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:46 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 04:04:47 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 14:14:55 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ class IrcServer {
 
 		void				initPoll( void );
 		void				messageAllUsers( std::string msg );
+		void				deleteUser( int fd );
 
 		int					getSocketFd( void );
 		void				setSocketFd( void );
