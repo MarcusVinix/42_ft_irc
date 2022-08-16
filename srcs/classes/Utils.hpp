@@ -1,21 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Channel.cpp                                        :+:      :+:    :+:   */
+/*   Utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/08/16 04:05:09 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 04:05:10 by Barney e Se      ###   ########.fr       */
+/*   Created: 2022/08/16 04:04:31 by Barney e Se       #+#    #+#             */
+/*   Updated: 2022/08/16 04:04:32 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Channel.hpp"
+#ifndef UTILS_HPP
+# define UTILS_HPP
 
-Channel::Channel( void ) {
-	return ;
-}
+#include "ft_irc.hpp"
 
-Channel::~Channel( void ) {
-	return ;
-}
+class Utils {
+
+	public:
+
+		Utils( void );
+		~Utils( void );
+
+	public:
+
+		static std::string				toupper( std::string str );
+		static std::vector<std::string>	split( std::string str, char c);
+		static std::string				joinSplit( std::vector<std::string> args );
+		static bool						invalidCharacter( std::string str );
+
+};
+
+#endif

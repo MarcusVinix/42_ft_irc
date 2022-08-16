@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   IrcServer.cpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/08/16 04:04:51 by Barney e Se       #+#    #+#             */
+/*   Updated: 2022/08/16 04:04:52 by Barney e Se      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "IrcServer.hpp"
 
 IrcServer::IrcServer( std::string host, std::string port, std::string password )
@@ -8,6 +20,63 @@ IrcServer::IrcServer( std::string host, std::string port, std::string password )
 
 IrcServer::~IrcServer( void ) {
 	return ;
+}
+
+/**
+ * @brief This function will set the socket_fd to o_nonblock
+ * and init the poll that will receive the request.
+ *
+ * about fcntl:
+ * https://man7.org/linux/man-pages/man2/fcntl.2.html
+ * https://www.geeksforgeeks.org/non-blocking-io-with-pipes-in-c/
+ *
+ * about poll:
+ * https://man7.org/linux/man-pages/man2/poll.2.html
+ */
+void	IrcServer::initPoll( void ) {
+
+	struct pollfd					pollFd = { this->_socketFd, POLLIN, 0 };
+	std::vector<pollfd>::iterator	it;
+
+	if (fcntl(this->_socketFd, F_SETFL, O_NONBLOCK) == -1) {
+		std::cerr << "fcntl: " << strerror(errno) << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	this->_pollFdVec.push_back(pollFd);
+	std::cout << "IrcServer Listen at: \n" <<
+		this->_host << ":" << this->_port << std::endl;
+
+	while (LOOP) {
+		it = this->_pollFdVec.begin();
+		if (poll(&(*it), this->_pollFdVec.size(), 1000) == -1) {
+			std::cerr << "poll: " << strerror(errno) << std::endl;
+			exit(EXIT_FAILURE);
+		}
+		this->_checkPoll();
+	}
+
+}
+
+void	IrcServer::messageAllUsers( std::string msg ) {
+
+	std::vector<User *>::iterator	it = this->_usersVec.begin();
+
+	if (msg.find("\r\n") == std::string::npos)
+		msg +="\r\n";
+
+	for( ; it != this->_usersVec.end(); it++) {
+		if (send((*it)->getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0) {
+			std::cerr << "messageAllUsers: send: " << strerror(errno) << std::endl;
+			exit(EXIT_FAILURE);
+		}
+	}
+	return ;
+
+}
+
+int	IrcServer::getSocketFd( void ) {
+	return (this->_socketFd);
 }
 
 /**
@@ -84,40 +153,36 @@ void	IrcServer::setSocketFd( void ) {
 	return ;
 }
 
-/**
- * @brief This function will set the socket_fd to o_nonblock
- * and init the poll that will receive the request.
- *
- * about fcntl:
- * https://man7.org/linux/man-pages/man2/fcntl.2.html
- * https://www.geeksforgeeks.org/non-blocking-io-with-pipes-in-c/
- *
- * about poll:
- * https://man7.org/linux/man-pages/man2/poll.2.html
- */
-void	IrcServer::initPoll( void ) {
+User	*IrcServer::getUserByFd( int fd ) {
 
-	struct pollfd					pollFd = { this->_socketFd, POLLIN, 0 };
-	std::vector<pollfd>::iterator	it;
+	std::vector<User *>::iterator	it = this->_usersVec.begin();
 
-	if (fcntl(this->_socketFd, F_SETFL, O_NONBLOCK) == -1) {
-		std::cerr << "fcntl: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
+	for ( ; it != this->_usersVec.end(); it++) {
+		if ((*it)->getFd() == fd)
+			return (*it);
 	}
+	return (NULL);
 
-	this->_pollFdVec.push_back(pollFd);
-	std::cout << "IrcServer Listen at: \n" <<
-		this->_host << ":" << this->_port << std::endl;
+}
 
-	while (LOOP) {
-		it = this->_pollFdVec.begin();
-		if (poll(&(*it), this->_pollFdVec.size(), 1000) == -1) {
-			std::cerr << "poll: " << strerror(errno) << std::endl;
-			exit(EXIT_FAILURE);
-		}
-		this->checkPoll();
+User	*IrcServer::getUserByNick( std::string nick ) {
+
+	std::vector<User *>::iterator	it = this->_usersVec.begin();
+
+	for ( ; it != this->_usersVec.end(); it++) {
+		if ((*it)->getNick() == nick)
+			return (*it);
 	}
+	return (NULL);
 
+}
+
+std::string	IrcServer::getPassword( void ) {
+	return (this->_password);
+}
+
+std::vector<User *>	IrcServer::getUsers( void ) {
+	return (this->_usersVec);
 }
 
 /**
@@ -128,45 +193,17 @@ void	IrcServer::initPoll( void ) {
  * Otherwise this is a existing user, so we call messageReceived to get the message(command).
  *
  */
-void	IrcServer::checkPoll( void ) {
+void	IrcServer::_checkPoll( void ) {
 
 	std::vector<pollfd>::iterator	it;
 
 	for (it = this->_pollFdVec.begin(); it != this->_pollFdVec.end(); it++) {
 		if (it->revents && POLLIN) {
 			if (it->fd == this->_socketFd)
-				this->createUser();
+				this->_createUser();
 			else
-				this->messageReceived(it->fd);
+				this->_messageReceived(it->fd);
 			break ;
-		}
-	}
-
-}
-
-/**
- * @brief This function will read the fd and get the buffer(message).
- * About recv:
- * https://man7.org/linux/man-pages/man2/recv.2.html
- * @todo After read all the message(command) a function or class command will be called.
- * @param fd to be read.
- */
-void	IrcServer::messageReceived( int fd ) {
-
-	char		buff;
-	std::string	str;
-
-	while (str.find("\n")) {
-		if (recv(fd, &buff, 1, 0) < 0) {
-			continue;
-		}
-		else {
-			str += buff;
-			if (str.find("\n") != std::string::npos) {
-				std::cout << "fd: " << fd << "  -  msg: " << str << std::endl;
-				Command command(str, fd, *this);
-				break ;
-			}
 		}
 	}
 
@@ -181,7 +218,7 @@ void	IrcServer::messageReceived( int fd ) {
  * About accept:
  * https://man7.org/linux/man-pages/man2/accept4.2.html
  */
-void	IrcServer::createUser( void ) {
+void	IrcServer::_createUser( void ) {
 
 	int					userFd;
 	User				*newUser;
@@ -210,55 +247,30 @@ void	IrcServer::createUser( void ) {
 
 }
 
-User	*IrcServer::getUserByFd( int fd ) {
+/**
+ * @brief This function will read the fd and get the buffer(message).
+ * About recv:
+ * https://man7.org/linux/man-pages/man2/recv.2.html
+ * @todo After read all the message(command) a function or class command will be called.
+ * @param fd to be read.
+ */
+void	IrcServer::_messageReceived( int fd ) {
 
-	std::vector<User *>::iterator	it = this->_usersVec.begin();
+	char		buff;
+	std::string	str;
 
-	for ( ; it != this->_usersVec.end(); it++) {
-		if ((*it)->getFd() == fd)
-			return (*it);
-	}
-	return (NULL);
-
-}
-
-User	*IrcServer::getUserByNick( std::string nick ) {
-	
-	std::vector<User *>::iterator	it = this->_usersVec.begin();
-
-	for ( ; it != this->_usersVec.end(); it++) {
-		if ((*it)->getNick() == nick)
-			return (*it);
-	}
-	return (NULL);
-
-}
-
-
-std::string	IrcServer::getPassword( void ) {
-	return (this->_password);
-}
-
-std::vector<User *>	IrcServer::getUsers( void ) {
-	return (this->_usersVec);
-}
-
-int	IrcServer::getSocketFd( void ) {
-	return (this->_socketFd);
-}
-
-void	IrcServer::messageAllUsers( std::string msg ) {
-
-	int								exitCode;
-	std::vector<User *>::iterator	it = this->_usersVec.begin();
-
-	for( ; it != this->_usersVec.end(); it++) {
-		exitCode = send((*it)->getFd(), msg.c_str(), strlen(msg.c_str()), 0);
-		if (exitCode < 0) {
-			std::cerr << "messageAllUsers: send: " << strerror(errno) << std::endl;
-			exit(EXIT_FAILURE);
+	while (str.find("\n")) {
+		if (recv(fd, &buff, 1, 0) < 0) {
+			continue;
+		}
+		else {
+			str += buff;
+			if (str.find("\n") != std::string::npos) {
+				std::cout << "fd: " << fd << "  -  msg: " << str << std::endl;
+				Command command(str, fd, *this);
+				break ;
+			}
 		}
 	}
-	return ;
 
 }

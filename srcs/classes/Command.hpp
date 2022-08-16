@@ -1,7 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Command.hpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/08/16 04:04:57 by Barney e Se       #+#    #+#             */
+/*   Updated: 2022/08/16 04:04:58 by Barney e Se      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef COMMAND_HPP
 # define COMMAND_HPP
 
 #include "IrcServer.hpp"
+#include "Utils.hpp"
 
 class IrcServer;
 
@@ -27,11 +40,6 @@ class Command {
 		void						commandNick( void );
 		void						commandUser( void );
 		void						commandPrivmsg( void );
-
-		std::string					ft_toupper( std::string str );
-		std::vector<std::string>	ft_split( std::string str, char c);
-		std::string					ft_join_split( std::vector<std::string> args );
-		bool						invalidCharacter( std::string str );
 
 };
 

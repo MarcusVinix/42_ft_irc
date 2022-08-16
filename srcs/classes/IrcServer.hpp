@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   IrcServer.hpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/08/16 04:04:46 by Barney e Se       #+#    #+#             */
+/*   Updated: 2022/08/16 04:04:47 by Barney e Se      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef IRC_SERVER_HPP
 # define IRC_SERVER_HPP
 
@@ -20,19 +32,24 @@ class IrcServer {
 		IrcServer( std::string host, std::string port, std::string password );
 		~IrcServer( void );
 
+	private:
+
+		void				_checkPoll( void );
+		void				_createUser( void );
+		void				_messageReceived( int fd );
+
+	public:
+
 		void				initPoll( void );
-		void				checkPoll( void );
-		void				messageReceived( int fd );
 		void				messageAllUsers( std::string msg );
-		void				createUser( void );
+
+		int					getSocketFd( void );
+		void				setSocketFd( void );
 		User				*getUserByFd( int fd );
 		User				*getUserByNick( std::string nick );
-		void				setSocketFd( void );
-		int					getSocketFd( void );
 		std::string			getPassword( void );
 		std::vector<User *>	getUsers( void );
 
 };
-
 
 #endif

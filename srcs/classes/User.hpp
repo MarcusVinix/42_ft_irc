@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   User.hpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/08/16 04:04:38 by Barney e Se       #+#    #+#             */
+/*   Updated: 2022/08/16 04:04:39 by Barney e Se      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef USER_HPP
 # define USER_HPP
 
@@ -20,7 +32,11 @@ class User {
 		User( int userFd );
 		~User( void );
 
-		void	receiveMessage( std::string msg );
+		void		receiveMessage( std::string msg );
+
+		bool		isAuth( void );
+		void		auth( void );
+		int			getFd( void );
 
 		std::string	getNick( void );
 		void		setNick( std::string nick );
@@ -32,10 +48,6 @@ class User {
 		void		setServername( std::string servername );
 		std::string	getHostname( void );
 		void		setHostname( std::string hostname );
-		bool		isAuth( void );
-		void		auth( void );
-		int			getFd( void );
-
 
 };
 
