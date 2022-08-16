@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:31 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 04:04:32 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 14:28:26 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ class Utils {
 		static std::vector<std::string>	split( std::string str, char c);
 		static std::string				joinSplit( std::vector<std::string> args );
 		static bool						invalidCharacter( std::string str );
+		static void						errorMessager( std::string function,
+														std::string error);
 
 };
 

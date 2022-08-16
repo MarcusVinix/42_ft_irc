@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:51 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 04:04:52 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 14:36:46 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,8 @@ void	IrcServer::initPoll( void ) {
 	struct pollfd					pollFd = { this->_socketFd, POLLIN, 0 };
 	std::vector<pollfd>::iterator	it;
 
-	if (fcntl(this->_socketFd, F_SETFL, O_NONBLOCK) == -1) {
-		std::cerr << "fcntl: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	if (fcntl(this->_socketFd, F_SETFL, O_NONBLOCK) == -1)
+		Utils::errorMessager("fcntl:", strerror(errno));
 
 	this->_pollFdVec.push_back(pollFd);
 	std::cout << "IrcServer Listen at: \n" <<
@@ -49,10 +47,8 @@ void	IrcServer::initPoll( void ) {
 
 	while (LOOP) {
 		it = this->_pollFdVec.begin();
-		if (poll(&(*it), this->_pollFdVec.size(), 1000) == -1) {
-			std::cerr << "poll: " << strerror(errno) << std::endl;
-			exit(EXIT_FAILURE);
-		}
+		if (poll(&(*it), this->_pollFdVec.size(), 1000) == -1)
+			Utils::errorMessager("poll:", strerror(errno));
 		this->_checkPoll();
 	}
 
@@ -65,14 +61,24 @@ void	IrcServer::messageAllUsers( std::string msg ) {
 	if (msg.find("\r\n") == std::string::npos)
 		msg +="\r\n";
 
-	for( ; it != this->_usersVec.end(); it++) {
-		if (send((*it)->getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0) {
-			std::cerr << "messageAllUsers: send: " << strerror(errno) << std::endl;
-			exit(EXIT_FAILURE);
-		}
-	}
+	for( ; it != this->_usersVec.end(); it++)
+		if (send((*it)->getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0)
+			Utils::errorMessager("messageAllUsers: send:", strerror(errno));
+
 	return ;
 
+}
+
+void	IrcServer::deleteUser( int fd ) {
+
+	std::vector<User *>::iterator	it = this->_usersVec.begin();
+
+	for ( ; it != this->_usersVec.end(); it++) {
+		if ((*it)->getFd() == fd) {
+			this->_usersVec.erase(it);
+			break ;
+		}
+	}
 }
 
 int	IrcServer::getSocketFd( void ) {
@@ -113,10 +119,8 @@ void	IrcServer::setSocketFd( void ) {
 	hints.ai_protocol = 0;
 
 	exitCode = getaddrinfo(this->_host.c_str(), this->_port.c_str(), &hints, &resultList);
-	if (exitCode != 0) {
-		std::cerr << "getaddrinfo: " << gai_strerror(exitCode) << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	if (exitCode != 0)
+		Utils::errorMessager("getaddrinfo:", gai_strerror(exitCode));
 
 	lst = resultList;
 	while (lst) {
@@ -127,8 +131,7 @@ void	IrcServer::setSocketFd( void ) {
 		if (exitCode != 0) {
 			close(serverFd);
 			freeaddrinfo(resultList);
-			std::cerr << "setsockopt: " << gai_strerror(exitCode) << std::endl;
-			exit(EXIT_FAILURE);
+			Utils::errorMessager("setsockopt:", gai_strerror(exitCode));
 		}
 		exitCode = bind(serverFd, lst->ai_addr, lst->ai_addrlen);
 		if (exitCode == 0)
@@ -139,15 +142,13 @@ void	IrcServer::setSocketFd( void ) {
 
 	freeaddrinfo(resultList);
 	if (lst == NULL) {
-		std::cerr << "bind: " << gai_strerror(exitCode) << std::endl;
-		exit(EXIT_FAILURE);
+		Utils::errorMessager("bind:", gai_strerror(exitCode));
 	}
 
 	exitCode = listen(serverFd, LISTEN_BACKLOG);
-	if (exitCode == -1) {
-		std::cerr << "listen: " << gai_strerror(exitCode) << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	if (exitCode == -1)
+		Utils::errorMessager("listen:", gai_strerror(exitCode));
+
 	this->_socketFd = serverFd;
 
 	return ;
@@ -227,16 +228,12 @@ void	IrcServer::_createUser( void ) {
 
 	len = sizeof(cli_addr);
 	userFd = accept(this->_socketFd, (struct sockaddr *)&cli_addr, &len);
-	if (userFd < 0) {
-		std::cerr << "accept: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	if (userFd < 0)
+		Utils::errorMessager("accept:", strerror(errno));
 
 	pollfd	userPollFd = { userFd, POLLIN, 0 };
-	if (fcntl(userFd, F_SETFL, O_NONBLOCK) == -1) {
-		std::cerr << "createUser: fcntl: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	if (fcntl(userFd, F_SETFL, O_NONBLOCK) == -1)
+		Utils::errorMessager("createUser: fcntl:", strerror(errno));
 
 	newUser = new User(userFd);
 	this->_usersVec.push_back(newUser);

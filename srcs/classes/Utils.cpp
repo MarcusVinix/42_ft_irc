@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:34 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 04:04:35 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 14:29:17 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,5 +67,12 @@ bool	Utils::invalidCharacter( std::string str ) {
 			return (true);
 	}
 	return (false);
+
+}
+
+void	Utils::errorMessager( std::string function,	std::string error) {
+
+	std::cerr << function << " " << error << std::endl;
+	exit(EXIT_FAILURE);
 
 }
