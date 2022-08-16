@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:05:09 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 09:49:17 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 14:58:47 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
 
-Channel::Channel( std::string name, std::string password ) 
+Channel::Channel( std::string name, std::string password )
 	: _name(name), _password(password) {
 	return ;
 }
@@ -76,13 +76,10 @@ void	Channel::messageFromChannel( std::string msg ) {
 
 	if (msg.find("\r\n") == std::string::npos)
 		msg += "\r\n";
-	
-	for ( ; it != this->_users.end(); it++) {
-		if (send((*it)->getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0) {
-			std::cerr << "messageFromChannel: send: " << strerror(errno) << std::endl;
-			exit(EXIT_FAILURE);
-		}
-	}
+
+	for ( ; it != this->_users.end(); it++)
+		if (send((*it)->getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0)
+			Utils::errorMessager("messageFromChannel: send:", strerror(errno));
 
 	return ;
 
@@ -95,14 +92,10 @@ void	Channel::messageToChannel( std::string msg, int senderFd ) {
 	if (msg.find("\r\n") == std::string::npos)
 		msg += "\r\n";
 
-	for ( ; it != this->_users.end(); it++) {
-		if ((*it)->getFd() != senderFd) {
-			if (send((*it)->getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0) {
-				std::cerr << "messageToChannel: send: " << strerror(errno) << std::endl;
-				exit(EXIT_FAILURE);
-			}
-		}
-	}
+	for ( ; it != this->_users.end(); it++)
+		if ((*it)->getFd() != senderFd)
+			if (send((*it)->getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0)
+				Utils::errorMessager("messageToChannel: send:", strerror(errno));
 
 	return ;
 
