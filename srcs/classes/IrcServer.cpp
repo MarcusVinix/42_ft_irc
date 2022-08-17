@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/17 12:40:44 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 14:58:31 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 16:06:22 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ IrcServer::IrcServer( std::string host, std::string port, std::string password )
 
 IrcServer::~IrcServer( void ) {
 
-	std::cout << "Destructor Irc Server" << std::endl;
 
 
 	std::vector<User *>::iterator	userIt = this->_usersVec.begin();
@@ -29,23 +28,18 @@ IrcServer::~IrcServer( void ) {
 
 	for ( ; channelIt != this->_channelsVec.end(); channelIt++) {
 		delete *channelIt;
-		this->_channelsVec.erase(channelIt);
 	}
 	this->_channelsVec.clear();
 
 	for ( ; pollIt != this->_pollFdVec.end(); pollIt++) {
-			close((*pollIt).fd);
-			this->_pollFdVec.erase(pollIt);
+		close((*pollIt).fd);
 	}
-	this->_pollFdVec.clear();
 
 	for ( ; userIt != this->_usersVec.end(); userIt++) {
 			delete *userIt;
-			this->_usersVec.erase(userIt);
 	}
 	this->_usersVec.clear();
-
-	close(this->_socketFd);
+	std::cout << "Destructor Irc Server" << std::endl;
 
 	return ;
 }

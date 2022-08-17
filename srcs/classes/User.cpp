@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:41 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 12:31:39 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 16:11:52 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,14 @@ User::User( int userFd )
 
 User::~User( void ) {
 	
-	std::vector<Channel *>::iterator	it = this->_channelsVec.begin();
+	std::cout << "Destructor User" << std::endl;
+
+	// std::vector<Channel *>::iterator	it = this->_channelsVec.begin();
 
 	close(this->_userFd);
-	for ( ; it != this->_channelsVec.end(); it++)
-		this->_channelsVec.erase(it);
-	this->_channelsVec.clear();
+	// for ( ; it != this->_channelsVec.end(); it++)
+	// 	this->_channelsVec.erase(it);
+	// this->_channelsVec.clear();
 	return ;
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:05:09 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 17:04:40 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 15:47:01 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ std::string	Channel::getPassword( void ) {
 }
 
 std::vector<User *>	Channel::getUsers( void ) {
+	std::cout << "Destructor Channel" << std::endl << std::flush;
+
 	return (this->_users);
 }
 
