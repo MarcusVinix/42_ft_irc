@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:57 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 12:07:13 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 21:05:27 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class Command {
 
 		void	parserBuffer( std::string buffer );
 		void	checkCommand( void );
-		void	numericResponse( std::string msg, std::string code, std::string opt = "" );
+		void	numericResponse( std::string msg, std::string code, int fd = 0, std::string opt = "" );
 
 		void	commandPass( void );
 		void	commandNick( void );
@@ -43,6 +43,10 @@ class Command {
 		void	commandPrivmsg( void );
 		void	commandQuit( void );
 		void	commandJoin( void );
+		void	commandOper( void );
+		void	commandNotice( void );
+		void	commandPart( void );
+		void	commandWho( void );
 
 };
 

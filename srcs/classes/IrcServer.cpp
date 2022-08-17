@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:51 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 11:20:35 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 18:53:55 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,16 +69,44 @@ void	IrcServer::messageAllUsers( std::string msg ) {
 
 }
 
+void	IrcServer::messageToServer( std::string msg, int userFd ) {
+	
+	std::vector<User *>::iterator	it = this->_usersVec.begin();
+
+	if (msg.find("\r\n") == std::string::npos)
+		msg +="\r\n";
+
+	for( ; it != this->_usersVec.end(); it++)
+		if ((*it)->getFd() != userFd)
+			if (send((*it)->getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0)
+				Utils::errorMessage("messageToServer: send:", strerror(errno));
+
+	return ;
+
+}
+
+
 void	IrcServer::deleteUser( int fd ) {
 
-	std::vector<User *>::iterator	it = this->_usersVec.begin();
-	User	*user;
+	std::vector<User *>::iterator	userIt = this->_usersVec.begin();
+	std::vector<Channel *>::iterator	channelIt = this->_channelsVec.begin();
+	std::vector<pollfd>::iterator	pollIt = this->_pollFdVec.begin();
 
-	for ( ; it != this->_usersVec.end(); it++) {
-		if ((*it)->getFd() == fd) {
-			user = *it;
-			this->_usersVec.erase(it);
-			delete user;
+	for ( ; channelIt != this->_channelsVec.end(); channelIt++)
+		(*channelIt)->removeUser(getUserByFd(fd));
+
+	for ( ; pollIt != this->_pollFdVec.end(); pollIt++) {
+		if ((*pollIt).fd == fd) {
+			close(fd);
+			this->_pollFdVec.erase(pollIt);
+			break ;
+		}
+	}
+
+	for ( ; userIt != this->_usersVec.end(); userIt++) {
+		if ((*userIt)->getFd() == fd) {
+			delete *userIt;
+			this->_usersVec.erase(userIt);
 			break ;
 		}
 	}
