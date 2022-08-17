@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:34 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 17:39:28 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 15:23:06 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ std::string	ft::joinSplit( std::vector<std::string>::iterator first,
 std::string	ft::joinSplit( std::vector<User *> users ) {
 
 	std::string						msg;
-	std::vector<User *>::iterator	it = users.begin() + 1;
+	std::vector<User *>::iterator	it = users.begin();
 
 	for ( ; it != users.end(); it++)
 		msg += (*it)->getNick() + " ";

@@ -3,9 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IrcServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Updated: 2022/08/17 12:40:44 by Barney e Se      ###   ########.fr       */
+/*   Created: 2022/08/17 12:40:44 by Barney e Se       #+#    #+#             */
+/*   Updated: 2022/08/17 14:58:31 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -323,8 +324,7 @@ void	IrcServer::_messageReceived( int fd ) {
 	while (str.find("\n")) {
 		if (recv(fd, &buff, 1, 0) < 0) {
 			continue;
-		}
-		else {
+		} else {
 
 			str += buff;
 			if (a > 500)

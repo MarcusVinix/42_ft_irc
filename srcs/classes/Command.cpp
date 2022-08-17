@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Command.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:05:01 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 11:26:52 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 15:35:49 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,7 +205,7 @@ void	Command::commandNick( void ) {
  */
 void	Command::commandUser( void ) {
 
-	if (this->_args.size() > 5)
+	if (this->_args.size() != 4)
 		return (numericResponse("usage: /USER <username> <hostname> <servername> <realname>", "461"));
 	if (this->_user.getUsername().empty() == false)
 		return (numericResponse("You are already register!", "462"));
@@ -393,6 +393,9 @@ void	Command::commandPart( void ) {
 void	Command::commandWho( void ) {
 
 	std::string						response;
+	Channel							*channel;
+	std::string						list;
+	std::string						channelName;
 	std::vector<User *>				users;
 	std::vector<User *>::iterator	it;
 
@@ -405,17 +408,30 @@ void	Command::commandWho( void ) {
 		for ( ; it != users.end(); it++)
 			numericResponse((*it)->getRealname(), "352", 0, (*it)->getUsername() + " 0 * " + (*it)->getNick());
 	} else {
-		for ( ; it != users.end(); it++) {
-			response = (*it)->getUsername() + " 0 * " + (*it)->getNick();
-			if (response.find(this->_args[0], 0) != std::string::npos ||
-				(*it)->getRealname().find(this->_args[0], 0) != std::string::npos) {
-				if (this->_args.size() == 2 && this->_args[1] == "o" && (*it)->isOper())
-					numericResponse((*it)->getRealname(), "352", 0, response);
-				else if (this->_args.size() == 1)
-					numericResponse((*it)->getRealname(), "352", 0, response);
+		if (this->_args[0][0] == '#') {
+			channel = this->_ircServer.getChannelByName(this->_args[0]);
+			if (channel == NULL)
+				return (numericResponse("Channel Not Found!", "403"));
+			list = ft::joinSplit(channel->getUsers());
+			channelName = channel->getName();
+			if (channelName[0] == '#')
+				channelName.erase(0, 1);
+			numericResponse(list, "352", 0, "Users on " + channelName + ": ");
+		} else {
+			for ( ; it != users.end(); it++) {
+				response = (*it)->getUsername() + " 0 * " + (*it)->getNick();
+				if (response.find(this->_args[0], 0) != std::string::npos ||
+					(*it)->getRealname().find(this->_args[0], 0) != std::string::npos) {
+					if (this->_args.size() == 2 && this->_args[1] == "o" && (*it)->isOper())
+						numericResponse((*it)->getRealname(), "352", 0, response);
+					else if (this->_args.size() == 1)
+						numericResponse((*it)->getRealname(), "352", 0, response);
+				}
 			}
 		}
 	}
+
+	
 	return (numericResponse("END of /WHO list", "315"));
 
 }
