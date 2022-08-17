@@ -6,14 +6,14 @@
 /*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:41 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 11:20:35 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 09:32:58 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "User.hpp"
 
 User::User( int userFd )
-	: _userFd(userFd), _nick(""), _username(""), _auth( false ) {
+	: _userFd(userFd), _nick(""), _username(""), _auth(false), _oper(false) {
 	return ;
 }
 
@@ -27,7 +27,7 @@ void	User::receiveMessage( std::string msg ) {
 		msg += "\r\n";
 
 	if (send(getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0)
-		Utils::errorMessage("receiveMessage: send:", strerror(errno));
+		Utils<std::string>::errorMessage("receiveMessage: send:", strerror(errno));
 
 	return ;
 
@@ -114,4 +114,12 @@ void	User::removeChannel( Channel * channel ) {
 
 	return ;
 
+}
+
+bool	User::isOper( void ) {
+	return (this->_oper);
+}
+
+void	User::setOper( void ) {
+	this->_oper = true;
 }

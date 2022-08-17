@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:05:09 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 11:20:35 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 09:17:53 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ User	*Channel::getUserByNick( std::string nick ) {
 
 	std::vector<User *>::iterator	it = this->_users.begin();
 
+	if (nick[0] == ':')
+		nick.erase(0, 1);
 	for ( ; it != this->_users.end(); it++) {
 		if ((*it)->getNick() == nick)
 			return (*it);
@@ -79,7 +81,7 @@ void	Channel::messageFromChannel( std::string msg ) {
 
 	for ( ; it != this->_users.end(); it++)
 		if (send((*it)->getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0)
-			Utils::errorMessage("messageFromChannel: send:", strerror(errno));
+			Utils<std::string>::errorMessage("messageFromChannel: send:", strerror(errno));
 
 	return ;
 
@@ -95,7 +97,7 @@ void	Channel::messageToChannel( std::string msg, int senderFd ) {
 	for ( ; it != this->_users.end(); it++)
 		if ((*it)->getFd() != senderFd)
 			if (send((*it)->getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0)
-				Utils::errorMessage("messageToChannel: send:", strerror(errno));
+				Utils<std::string>::errorMessage("messageToChannel: send:", strerror(errno));
 
 	return ;
 

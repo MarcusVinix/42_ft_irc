@@ -6,12 +6,13 @@
 /*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:38 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 11:14:09 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 09:37:29 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef USER_HPP
 # define USER_HPP
+# define OPERATOR_PASS "irineu"
 
 #include "ft_irc.hpp"
 #include "Utils.hpp"
@@ -29,8 +30,9 @@ class User {
 		std::string				_realname;
 		std::string				_servername;
 		std::string				_hostname;
-		bool					_auth;
 		std::vector<Channel *>	_channelsVec;
+		bool					_auth;
+		bool					_oper;
 
 	public:
 
@@ -56,6 +58,8 @@ class User {
 		std::vector<Channel *>	getChannels( void );
 		void					addChannel( Channel * channel );
 		void					removeChannel( Channel * channel );
+		bool					isOper( void );
+		void					setOper( void );
 
 };
 

@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:34 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 12:13:19 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 09:13:45 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,12 @@ std::vector<std::string>	Utils::split( std::string str, char c) {
 
 }
 
-std::string	Utils::joinSplit( std::vector<std::string> args ) {
+std::string	Utils::joinSplit( Iterator first, Iterator last ) {
 
-	std::string							msg;
-	std::vector<std::string>::iterator	it = args.begin() + 1;
+	std::string	msg;
 
-	for ( ; it != args.end(); it++) {
-		msg += *it + " ";
+	for ( ; first != last; first++) {
+		msg += *first + " ";
 	}
 
 	return (msg);
