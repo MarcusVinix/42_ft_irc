@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:05:01 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 22:49:27 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 10:29:37 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,11 @@ void	Command::parserBuffer( std::string buffer ) {
 	buffer.erase(std::remove(buffer.begin(), buffer.end(), '\n'), buffer.end());
 	buffer.erase(std::remove(buffer.begin(), buffer.end(), '\r'), buffer.end());
 
-	this->_args = Utils::split(buffer, ' ');
+	this->_args = Utils<std::string>::split(buffer, ' ');
 	if (this->_args.size() == 0)
 		return ;
 
-	this->_command = Utils::toupper(*this->_args.begin());
+	this->_command = Utils<std::string>::toupper(*this->_args.begin());
 	this->_args.erase(this->_args.begin());
 	if (this->_args[0][0] == ':')
 		this->_args[0].erase(0, 1);
@@ -133,7 +133,7 @@ void	Command::numericResponse( std::string msg, std::string code, int fd, std::s
 	if (fd == 0)
 		fd = this->_user.getFd();
 	if (send(fd, response.c_str(), strlen(response.c_str()), 0) < 0)
-		Utils::errorMessage("numericResponse: send:", strerror(errno));
+		Utils<std::string>::errorMessage("numericResponse: send:", strerror(errno));
 
 	return ;
 
@@ -178,7 +178,7 @@ void	Command::commandNick( void ) {
 		return (numericResponse("Nick cannot be empty!", "432"));
 	if (this->_args[0] == "anonymous")
 		return (numericResponse("This nick can't be used!", "432"));
-	if (Utils::invalidCharacter(this->_args[0]))
+	if (Utils<std::string>::invalidCharacter(this->_args[0]))
 		return (numericResponse("This nick contain invalids characters!", "432"));
 
 	usersVec = this->_ircServer.getUsers();
@@ -229,11 +229,11 @@ void	Command::commandPrivmsg( void ) {
 	if (this->_args.size() == 1)
 		return (numericResponse("A message must be provide!", "412"));
 
+	msg = Utils<std::string>::joinSplit(this->_args.begin() + 1, this->_args.end());
 	if (this->_args[0][0] != '#') {
 		receive = this->_ircServer.getUserByNick(this->_args[0]);
 		if (receive == NULL)
 			return (numericResponse("Nick not found!", "401"));
-		msg = Utils::joinSplit(this->_args);
 		if (msg[0] == ':')
 			msg.erase(0, 1);
 		response = ":" + this->_user.getNick() + " PRIVMSG " + receive->getNick() + " :" + msg;
@@ -244,7 +244,6 @@ void	Command::commandPrivmsg( void ) {
 			return (numericResponse("Channel Not Found!", "403"));
 		if (channel->getUserByNick(this->_user.getNick()) == NULL)
 			return (numericResponse("To send a message to a channel you need to join it!", "442"));
-		msg = Utils::joinSplit(this->_args);
 		if (msg[0] == ':')
 			msg.erase(0, 1);
 		response = ":" + this->_user.getNick() + " PRIVMSG " + channel->getName() + " :" + msg;
@@ -258,7 +257,7 @@ void	Command::commandQuit( void ) {
 
 	std::string	response;
 
-	response = ":" + this->_user.getNick() + " QUIT :" + Utils::joinSplit(this->_args);
+	response = ":" + this->_user.getNick() + " QUIT :" + Utils<std::string>::joinSplit(this->_args.begin() + 1, this->_args.end());
 
 	this->_ircServer.messageAllUsers(response);
 	this->_ircServer.deleteUser(this->_user.getFd());
@@ -266,29 +265,47 @@ void	Command::commandQuit( void ) {
 	return ;
 }
 
+typedef typename std::vector<User *>::iterator	Iterator2;
+
+std::string				joinSplit( std::vector<User *> users ) {
+
+	std::string	msg;
+	Iterator2	it = users.begin() + 1;
+
+	for ( ; it != users.end(); it++) {
+		msg += (*it)->getNick() + " ";
+	}
+	return (msg);
+
+};
+
 void	Command::commandJoin( void ) {
 
 	Channel		*channel;
 	std::string	users;
 	std::string	channelName;
+	std::string	password;
 
-	if (this->_args[0][0] != '#' || this->_args.size() != 2)
+	if (this->_args[0][0] != '#')
+		this->_args[0] = "#" + this->_args[0];
+	if (this->_args.size() < 1 || this->_args.size() > 2)
 		return (numericResponse("usage: /JOIN <channels> [<keys>]", "461"));
-	if (Utils::invalidCharacter(this->_args[0].c_str() + 1))
+	if (Utils<std::string>::invalidCharacter(this->_args[0].c_str() + 1))
 		return (numericResponse("This channel name contain invalid characters!", "403"));
-
+	
+	password = this->_args.size() == 1 ? "" : this->_args[1];
 	channel = this->_ircServer.getChannelByName(this->_args[0]);
 	if (channel == NULL) {
-		channel = new Channel(this->_args[0], this->_args[1]);
+		channel = new Channel(this->_args[0], password);
 		this->_ircServer.addChannel(channel);
 	}
-	if (this->_args[1] == channel->getPassword())
+	if (password == channel->getPassword())
 		this->_user.addChannel(channel);
 	else
 		return (numericResponse("Password incorrect to channel!", "464"));
 	channel->messageFromChannel(":" + this->_user.getNick() + " JOIN " + channel->getName());
-	
-	users = Utils::joinSplit(channel->getUsers());
+
+	users = joinSplit(channel->getUsers());
 	channelName = channel->getName();
 	if (channelName[0] == '#')
 		channelName.erase(0, 1);
@@ -333,7 +350,7 @@ void	Command::commandNotice( void ) {
 	receiver = this->_ircServer.getUserByNick(this->_args[0]);
 	if (receiver == NULL)
 		return ;
-	notice = Utils::joinSplit(this->_args);
+	notice = Utils<std::string>::joinSplit(this->_args.begin() + 1, this->_args.end());
 	if (notice[0] == ':')
 		notice.erase(0, 1);
 	response = ":" + this->_user.getNick() + " PRIVMSG " + receiver->getNick() + " :" + notice;
@@ -382,6 +399,8 @@ void	Command::commandPart( void ) {
  * and is operator will be send.
  * Every response is a numeric response.
  * 
+ * @todo adicionar um else if após o if, se o args[0][0] for igual a # quer dizer que é um canal, então o loop será feito com os usuarios do canal.
+ * 
  */
 void	Command::commandWho( void ) {
 
@@ -415,36 +434,34 @@ void	Command::commandWho( void ) {
 
 void	Command::commandKick( void ) {
 
-	Channel							*channel;
-	User							*user;
-	std::string						msg;
-	std::string						response;
-	std::vector<std::string>::iterator	it;
+	Channel		*channel;
+	User		*user;
+	std::string	msg;
+	std::string	response;
 
 	if (this->_args[0] == this->_user.getNick())
 		this->_args.erase(this->_args.begin());
 	if (this->_args.size() < 2)
 		return (numericResponse("usage: /KICK <channel> <user> [<comment>]", "461"));
+
 	if (this->_args[0][0] != '#')
 		this->_args[0] = '#' + this->_args[0];
 	channel = this->_ircServer.getChannelByName(this->_args[0]);
 	if (channel == NULL)
 		return (numericResponse("Channel Not Found!", "403", 0, this->_args[0]));
+
 	if (this->_user.isOper() == false)
-		return (numericResponse("You need be operator to kick a user!", "482", 0, this->_args[0]));
+		return (numericResponse("You need be operator to kick a user!", "482", 0, channel->getName()));
 	if (channel->getUserByNick(this->_user.getNick()) == NULL)
-		return (numericResponse("You need be a member of the channel to kick a user!", "442", 0, this->_args[0]));
-	std::cout << "NICK Ç " << this->_args[1] << std::endl;
-	
+		return (numericResponse("You need be a member of the channel to kick a user!", "442", 0, channel->getName()));
 	user = channel->getUserByNick(this->_args[1]);
 	if (user == NULL)
-		return (numericResponse("This user isn't in this channel!", "441", 0, this->_args[0] + " " + this->_args[1]));
-	it = this->_args.begin() + 2;
-	for ( ; it != this->_args.end(); it++)
-		msg += *it + " ";
+		return (numericResponse("This user isn't in this channel!", "441", 0, channel->getName() + " " + this->_args[1]));
+
+	msg = Utils<std::string>::joinSplit(this->_args.begin() + 2, this->_args.end());
 	if (msg[0] == ':')
 		msg.erase(0, 1);
-	response = ":" + this->_user.getNick() + " KICK " + this->_args[0] + " " + user->getNick() + " " + msg;
+	response = ":" + this->_user.getNick() + " KICK " + channel->getName() + " " + user->getNick() + " " + msg;
 	user->removeChannel(channel);
 	user->receiveMessage(response);
 	channel->removeUser(user);

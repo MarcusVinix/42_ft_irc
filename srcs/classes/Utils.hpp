@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:31 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 12:12:20 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 09:30:37 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,25 +16,79 @@
 #include "ft_irc.hpp"
 #include "User.hpp"
 
-class User;
 
+template < class T = std::string >
 class Utils {
 
-	public:
-
-		Utils( void );
-		~Utils( void );
+	class User;
 
 	public:
 
-		static std::string				toupper( std::string str );
-		static std::vector<std::string>	split( std::string str, char c);
-		static std::string				joinSplit( std::vector<std::string> args );
-		static std::string				joinSplit( std::vector<User *> users );
-		static bool						invalidCharacter( std::string str );
-		static void						errorMessage( std::string function,
-														std::string error);
+		Utils( void ) { return ; };
+		~Utils( void ) { return ; };
+
+		typedef typename std::vector<T>::iterator	Iterator;
+
+		static T				toupper( T str ) {
+
+			for (int i = 0; str[i] != '\0'; i++)
+					str[i] = std::toupper(str[i]);
+			return (str);
+
+		};
+
+		static std::vector<T>	split( T str, char c) {
+
+			T	buff = "";
+			std::vector<T>	split;
+
+			for (int i = 0; str[i] != '\0'; i++) {
+				if (str[i] != c)
+					buff += str[i];
+				else if (str[i] == c && buff != "") {
+					split.push_back(buff);
+					buff = "";
+				}
+			}
+			if (buff != "")
+				split.push_back(buff);
+			return (split);
+
+		};
+
+		static T				joinSplit( Iterator first, Iterator last ) {
+
+			T	msg;
+
+			for ( ; first != last; first++) {
+				msg += *first + " ";
+			}
+
+			return (msg);
+
+		};
+
+
+
+		static bool				invalidCharacter( T str ) {
+
+			for (int i = 0; str[i] != '\0'; i++) {
+				if (!isalnum(str[i]) && !isalpha(str[i]))
+					return (true);
+			}
+			return (false);
+
+		};
+
+		static void				errorMessage( T function, T error) {
+
+			std::cerr << function << " " << error << std::endl;
+			exit(EXIT_FAILURE);
+
+		};
 
 };
+
+
 
 #endif
