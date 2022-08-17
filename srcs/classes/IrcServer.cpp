@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:51 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 09:17:56 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 12:40:44 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,34 @@ IrcServer::IrcServer( std::string host, std::string port, std::string password )
 }
 
 IrcServer::~IrcServer( void ) {
+
+	std::cout << "Destructor Irc Server" << std::endl;
+
+
+	std::vector<User *>::iterator	userIt = this->_usersVec.begin();
+	std::vector<Channel *>::iterator	channelIt = this->_channelsVec.begin();
+	std::vector<pollfd>::iterator	pollIt = this->_pollFdVec.begin();
+
+	for ( ; channelIt != this->_channelsVec.end(); channelIt++) {
+		delete *channelIt;
+		this->_channelsVec.erase(channelIt);
+	}
+	this->_channelsVec.clear();
+
+	for ( ; pollIt != this->_pollFdVec.end(); pollIt++) {
+			close((*pollIt).fd);
+			this->_pollFdVec.erase(pollIt);
+	}
+	this->_pollFdVec.clear();
+
+	for ( ; userIt != this->_usersVec.end(); userIt++) {
+			delete *userIt;
+			this->_usersVec.erase(userIt);
+	}
+	this->_usersVec.clear();
+
+	close(this->_socketFd);
+
 	return ;
 }
 
@@ -47,7 +75,7 @@ void	IrcServer::initPoll( void ) {
 
 	while (LOOP) {
 		it = this->_pollFdVec.begin();
-		if (poll(&(*it), this->_pollFdVec.size(), 1000) == -1)
+		if (poll(&(*it), this->_pollFdVec.size(), 5000) == -1)
 			Utils<std::string>::errorMessage("poll:", strerror(errno));
 		this->_checkPoll();
 	}
@@ -85,7 +113,6 @@ void	IrcServer::messageToServer( std::string msg, int userFd ) {
 
 }
 
-
 void	IrcServer::deleteUser( int fd ) {
 
 	std::vector<User *>::iterator	userIt = this->_usersVec.begin();
@@ -97,8 +124,8 @@ void	IrcServer::deleteUser( int fd ) {
 
 	for ( ; pollIt != this->_pollFdVec.end(); pollIt++) {
 		if ((*pollIt).fd == fd) {
-			close(fd);
 			this->_pollFdVec.erase(pollIt);
+			close(fd);
 			break ;
 		}
 	}
@@ -110,6 +137,8 @@ void	IrcServer::deleteUser( int fd ) {
 			break ;
 		}
 	}
+
+
 }
 
 void	IrcServer::addChannel( Channel *channel ) {
@@ -290,20 +319,29 @@ void	IrcServer::_messageReceived( int fd ) {
 
 	char		buff;
 	std::string	str;
+	int			a = 0;
 
 	while (str.find("\n")) {
 		if (recv(fd, &buff, 1, 0) < 0) {
 			continue;
 		}
 		else {
+
 			str += buff;
+			if (a > 500)
+				str = "/Quit not today!\r\n";
+
 			if (str.find("\n") != std::string::npos) {
-				std::cout << "fd: " << fd << "  -  msg: " << str << std::endl;
+				if (str.size() == 1)
+					str = "/Quit not today!\r\n";
+				std::cout << "fd: " << fd << "  -  msg: |" << str << "|"<< std::endl;
 				Command command(str, fd, *this);
 				break ;
 			}
 		}
+		a++;
 	}
+	str.clear();
 
 }
 

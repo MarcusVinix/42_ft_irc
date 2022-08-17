@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:05:01 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 10:29:37 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 11:26:52 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ void	Command::checkCommand( void ) {
 		return (numericResponse("CAP * ACK multi-prefix", ""));
 	if (this->_command == "PASS")
 		commandPass();
+	if (this->_command == "QUIT")
+		commandQuit();
 	else if (this->_user.isAuth()){
 		if (this->_command == "NICK")
 			commandNick();
