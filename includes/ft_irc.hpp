@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:07:35 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 17:19:55 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 12:33:57 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,6 @@
 #include <vector>
 #include <algorithm>
 #include <cctype>
+#include <signal.h>
 
 #endif
