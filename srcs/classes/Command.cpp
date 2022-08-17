@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:05:01 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 21:18:54 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 22:49:27 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,8 @@ void	Command::checkCommand( void ) {
 					commandPart();
 				else if (this->_command == "WHO")
 					commandWho();
+				else if (this->_command == "KICK")
+					commandKick();
 			}
 			else
 				return (numericResponse("A user must be provide: usage: /USER <username> <hostname> <servername> <realname>", "431"));
@@ -408,5 +410,46 @@ void	Command::commandWho( void ) {
 		}
 	}
 	return (numericResponse("END of /WHO list", "315"));
+
+}
+
+void	Command::commandKick( void ) {
+
+	Channel							*channel;
+	User							*user;
+	std::string						msg;
+	std::string						response;
+	std::vector<std::string>::iterator	it;
+
+	if (this->_args[0] == this->_user.getNick())
+		this->_args.erase(this->_args.begin());
+	if (this->_args.size() < 2)
+		return (numericResponse("usage: /KICK <channel> <user> [<comment>]", "461"));
+	if (this->_args[0][0] != '#')
+		this->_args[0] = '#' + this->_args[0];
+	channel = this->_ircServer.getChannelByName(this->_args[0]);
+	if (channel == NULL)
+		return (numericResponse("Channel Not Found!", "403", 0, this->_args[0]));
+	if (this->_user.isOper() == false)
+		return (numericResponse("You need be operator to kick a user!", "482", 0, this->_args[0]));
+	if (channel->getUserByNick(this->_user.getNick()) == NULL)
+		return (numericResponse("You need be a member of the channel to kick a user!", "442", 0, this->_args[0]));
+	std::cout << "NICK Ç " << this->_args[1] << std::endl;
+	
+	user = channel->getUserByNick(this->_args[1]);
+	if (user == NULL)
+		return (numericResponse("This user isn't in this channel!", "441", 0, this->_args[0] + " " + this->_args[1]));
+	it = this->_args.begin() + 2;
+	for ( ; it != this->_args.end(); it++)
+		msg += *it + " ";
+	if (msg[0] == ':')
+		msg.erase(0, 1);
+	response = ":" + this->_user.getNick() + " KICK " + this->_args[0] + " " + user->getNick() + " " + msg;
+	user->removeChannel(channel);
+	user->receiveMessage(response);
+	channel->removeUser(user);
+	channel->messageFromChannel(response);
+
+	return ;
 
 }

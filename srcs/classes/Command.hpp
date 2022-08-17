@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:57 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 21:05:27 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/16 21:44:19 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ class Command {
 		void	commandNotice( void );
 		void	commandPart( void );
 		void	commandWho( void );
+		void	commandKick( void );
 
 };
 
