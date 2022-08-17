@@ -3,24 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:34 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 09:13:45 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 17:39:28 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Utils.hpp"
 
-Utils::Utils( void ) {
-	return ;
-}
-
-Utils::~Utils( void ) {
-	return ;
-}
-
-std::vector<std::string>	Utils::split( std::string str, char c) {
+std::vector<std::string>	ft::split( std::string str, char c) {
 
 	std::string	buff = "";
 	std::vector<std::string>	split;
@@ -39,32 +31,29 @@ std::vector<std::string>	Utils::split( std::string str, char c) {
 
 }
 
-std::string	Utils::joinSplit( Iterator first, Iterator last ) {
+std::string	ft::joinSplit( std::vector<std::string>::iterator first,
+							std::vector<std::string>::iterator last ) {
 
 	std::string	msg;
 
-	for ( ; first != last; first++) {
+	for ( ; first != last; first++)
 		msg += *first + " ";
-	}
-
 	return (msg);
 
 }
 
-std::string	Utils::joinSplit( std::vector<User *> users ) {
+std::string	ft::joinSplit( std::vector<User *> users ) {
 
-	std::string							msg;
+	std::string						msg;
 	std::vector<User *>::iterator	it = users.begin() + 1;
 
-	for ( ; it != users.end(); it++) {
+	for ( ; it != users.end(); it++)
 		msg += (*it)->getNick() + " ";
-	}
-
 	return (msg);
 
 }
 
-std::string	Utils::toupper( std::string str ) {
+std::string	ft::toupper( std::string str ) {
 
 	for (int i = 0; str[i] != '\0'; i++)
 		str[i] = std::toupper(str[i]);
@@ -72,17 +61,16 @@ std::string	Utils::toupper( std::string str ) {
 
 }
 
-bool	Utils::invalidCharacter( std::string str ) {
+bool	ft::invalidCharacter( std::string str ) {
 
-	for (int i = 0; str[i] != '\0'; i++) {
+	for (int i = 0; str[i] != '\0'; i++)
 		if (!isalnum(str[i]) && !isalpha(str[i]))
 			return (true);
-	}
 	return (false);
 
 }
 
-void	Utils::errorMessage( std::string function,	std::string error) {
+void	ft::errorMessage( std::string function,	std::string error ) {
 
 	std::cerr << function << " " << error << std::endl;
 	exit(EXIT_FAILURE);

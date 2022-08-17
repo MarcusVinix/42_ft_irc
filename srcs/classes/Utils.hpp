@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:31 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 09:30:37 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 17:39:41 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,79 +16,22 @@
 #include "ft_irc.hpp"
 #include "User.hpp"
 
+class User;
 
-template < class T = std::string >
-class Utils {
+namespace ft
+{
+	std::vector<std::string>	split( std::string str, char c );
 
-	class User;
+	std::string	joinSplit( std::vector<std::string>::iterator first,
+								std::vector<std::string>::iterator last );
 
-	public:
+	std::string	joinSplit( std::vector<User *> users );
 
-		Utils( void ) { return ; };
-		~Utils( void ) { return ; };
+	std::string	toupper( std::string str );
 
-		typedef typename std::vector<T>::iterator	Iterator;
+	bool	invalidCharacter( std::string str );
 
-		static T				toupper( T str ) {
-
-			for (int i = 0; str[i] != '\0'; i++)
-					str[i] = std::toupper(str[i]);
-			return (str);
-
-		};
-
-		static std::vector<T>	split( T str, char c) {
-
-			T	buff = "";
-			std::vector<T>	split;
-
-			for (int i = 0; str[i] != '\0'; i++) {
-				if (str[i] != c)
-					buff += str[i];
-				else if (str[i] == c && buff != "") {
-					split.push_back(buff);
-					buff = "";
-				}
-			}
-			if (buff != "")
-				split.push_back(buff);
-			return (split);
-
-		};
-
-		static T				joinSplit( Iterator first, Iterator last ) {
-
-			T	msg;
-
-			for ( ; first != last; first++) {
-				msg += *first + " ";
-			}
-
-			return (msg);
-
-		};
-
-
-
-		static bool				invalidCharacter( T str ) {
-
-			for (int i = 0; str[i] != '\0'; i++) {
-				if (!isalnum(str[i]) && !isalpha(str[i]))
-					return (true);
-			}
-			return (false);
-
-		};
-
-		static void				errorMessage( T function, T error) {
-
-			std::cerr << function << " " << error << std::endl;
-			exit(EXIT_FAILURE);
-
-		};
-
-};
-
-
+	void	errorMessage( std::string function,	std::string error );
+}
 
 #endif
