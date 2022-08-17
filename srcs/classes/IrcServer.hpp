@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IrcServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:46 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/16 17:56:20 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 21:49:32 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ class IrcServer {
 		void					initPoll( void );
 		void					messageAllUsers( std::string msg );
 		void					messageToServer( std::string msg, int userFd );
+		bool					checkOperators( void );
 		void					deleteUser( int fd );
 		void					addChannel( Channel *channel );
 

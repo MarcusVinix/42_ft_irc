@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Command.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:05:01 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 15:35:49 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 22:14:04 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,10 +77,14 @@ void	Command::checkCommand( void ) {
 
 	if (this->_command == "CAP")
 		return (numericResponse("CAP * ACK multi-prefix", ""));
-	if (this->_command == "PASS")
+	else if (this->_command == "PASS")
 		commandPass();
-	if (this->_command == "QUIT")
+	else if (this->_command == "QUIT")
 		commandQuit();
+	else if (this->_command == "HELP")
+		commandHelp();
+	else if (this->_command == "PONG")
+		return ;
 	else if (this->_user.isAuth()){
 		if (this->_command == "NICK")
 			commandNick();
@@ -257,12 +261,19 @@ void	Command::commandPrivmsg( void ) {
 
 void	Command::commandQuit( void ) {
 
+	User		*user;
 	std::string	response;
 
 	response = ":" + this->_user.getNick() + " QUIT :" + ft::joinSplit(this->_args.begin() + 1, this->_args.end());
 
 	this->_ircServer.messageAllUsers(response);
 	this->_ircServer.deleteUser(this->_user.getFd());
+	if (this->_ircServer.getUsers().size() != 0	&& !this->_ircServer.checkOperators()) {
+		user = this->_ircServer.getUsers()[0];
+		user->isOper();
+		this->_ircServer.messageToServer(":127.0.0.1 001 all :" + user->getNick() + " is an operator now!", user->getFd());
+		numericResponse("You are worth! Now you became an operator!", "381", user->getFd());
+	}
 
 	return ;
 }
@@ -431,7 +442,7 @@ void	Command::commandWho( void ) {
 		}
 	}
 
-	
+
 	return (numericResponse("END of /WHO list", "315"));
 
 }
@@ -473,4 +484,17 @@ void	Command::commandKick( void ) {
 
 	return ;
 
+}
+
+void	Command::commandHelp( void ) {
+
+	numericResponse("START of /HELP list", "704"));
+
+	numericResponse("Commands Avaliable: PASS, QUIT, HELP, PONG, NICK, USER, PRIVMSG, JOIN, OPER, NOTICE, PART, WHO, KICK, NAMES, KILL, DIE, CLOSE ", "705", this->_user->getFd());
+
+	numericResponse("To see how to use a command, send: /<command> ", "705", this->_user->getFd());
+
+	numericResponse("END of /HELP list", "706");
+
+	return ;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IrcServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/17 12:40:44 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 16:06:22 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 21:49:13 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,11 +294,25 @@ void	IrcServer::_createUser( void ) {
 		ft::errorMessage("createUser: fcntl:", strerror(errno));
 
 	newUser = new User(userFd);
+	if (this->_usersVec.size() == 0)
+		newUser->setOper();
 	this->_usersVec.push_back(newUser);
 	this->_pollFdVec.push_back(userPollFd);
 	std::cout << "New User: " << userFd << std::endl;
 
 	return ;
+
+}
+
+bool	IrcServer::checkOperators( void ) {
+
+	std::vector<User *>::iterator	it = this->_usersVec.begin();
+
+	for(; it != this->_usersVec.end(); it++)
+		if ((*it)->isOper())
+			return true;
+
+	return false;
 
 }
 
@@ -327,7 +341,7 @@ void	IrcServer::_messageReceived( int fd ) {
 			if (str.find("\n") != std::string::npos) {
 				if (str.size() == 1)
 					str = "/Quit not today!\r\n";
-				std::cout << "fd: " << fd << "  -  msg: |" << str << "|"<< std::endl;
+				std::cout << "fd: " << fd << "  -|" << str << "|"<< std::endl;
 				Command command(str, fd, *this);
 				break ;
 			}
