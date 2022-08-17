@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:41 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 09:32:58 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 17:05:39 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	User::receiveMessage( std::string msg ) {
 		msg += "\r\n";
 
 	if (send(getFd(), msg.c_str(), strlen(msg.c_str()), 0) < 0)
-		Utils<std::string>::errorMessage("receiveMessage: send:", strerror(errno));
+		ft::errorMessage("receiveMessage: send:", strerror(errno));
 
 	return ;
 
