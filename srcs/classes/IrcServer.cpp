@@ -5,11 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Updated: 2022/08/17 12:40:44 by Barney e Se      ###   ########.fr       */
+/*   Created: 2022/08/17 12:40:44 by Barney e Se       #+#    #+#             */
+/*   Updated: 2022/08/17 18:42:10 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "IrcServer.hpp"
 
 IrcServer::IrcServer( std::string host, std::string port, std::string password )
 	: _host(host), _port(port), _password(password) {
@@ -323,8 +323,7 @@ void	IrcServer::_messageReceived( int fd ) {
 	while (str.find("\n")) {
 		if (recv(fd, &buff, 1, 0) < 0) {
 			continue;
-		}
-		else {
+		} else {
 
 			str += buff;
 			if (a > 500)

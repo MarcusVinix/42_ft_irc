@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:05:01 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 11:26:52 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 18:40:30 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -387,7 +387,7 @@ void	Command::commandPart( void ) {
  * and is operator will be send.
  * Every response is a numeric response.
  *
- * @todo adicionar um else if após o if, se o args[0][0] for igual a # quer dizer que é um canal, então o loop será feito com os usuarios do canal.
+ * @todo
  *
  */
 void	Command::commandWho( void ) {
@@ -399,12 +399,15 @@ void	Command::commandWho( void ) {
 	if (this->_args.size() > 2)
 		return (numericResponse("usage: /WHO [<name> [<o>]]", "461"));
 
-	users = this->_ircServer.getUsers();
 	it = users.begin();
 	if (this->_args.size() == 0) {
 		for ( ; it != users.end(); it++)
 			numericResponse((*it)->getRealname(), "352", 0, (*it)->getUsername() + " 0 * " + (*it)->getNick());
-	} else {
+	} else  {
+		if (this->_args[0][0] == '#')
+			users = (this->_ircServer.getChannelByName(this->_args[0]))->getUsers();
+		else
+			users = this->_ircServer.getUsers();
 		for ( ; it != users.end(); it++) {
 			response = (*it)->getUsername() + " 0 * " + (*it)->getNick();
 			if (response.find(this->_args[0], 0) != std::string::npos ||
