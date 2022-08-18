@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:41 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 21:21:10 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/18 12:25:11 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,8 @@ User::User( int userFd )
 
 User::~User( void ) {
 
-	std::cout << "Destructor User" << std::endl;
-
-	// std::vector<Channel *>::iterator	it = this->_channelsVec.begin();
-
 	close(this->_userFd);
-	// for ( ; it != this->_channelsVec.end(); it++)
-	// 	this->_channelsVec.erase(it);
-	// this->_channelsVec.clear();
+
 	return ;
 }
 
@@ -130,5 +124,5 @@ bool	User::isOper( void ) {
 }
 
 void	User::setOper( void ) {
-	this->_oper = true;
+	this->_oper = !this->_oper;
 }

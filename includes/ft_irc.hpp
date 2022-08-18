@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_irc.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:07:35 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 12:33:57 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/18 11:52:24 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 
 # define LISTEN_BACKLOG 50
 # define HOST "127.0.0.1"
-# define LOOP 1
+
+extern bool	loop;
 
 #include <iostream>
 #include <cstring>
@@ -30,5 +31,7 @@
 #include <algorithm>
 #include <cctype>
 #include <signal.h>
+#include <stdexcept>
+#include "colors.hpp"
 
 #endif

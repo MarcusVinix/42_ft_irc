@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+         #
+#    By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/08/16 04:03:12 by Barney e Se       #+#    #+#              #
-#    Updated: 2022/08/17 17:36:43 by Barney e Se      ###   ########.fr        #
+#    Updated: 2022/08/18 11:35:28 by Barney e Se      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,6 +47,9 @@ $(OBJ_DIR)/%.o: %.cpp $(INC)
 
 run: $(NAME)
 	./$(NAME) 6667 123
+
+run_val: $(NAME)
+	valgrind --leak-check=full --show-leak-kinds=all ./$(NAME) 6667 123
 
 #_________________________/\__________________________#
 

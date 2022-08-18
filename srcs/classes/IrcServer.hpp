@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   IrcServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:46 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 21:49:32 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/18 11:17:08 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef IRC_SERVER_HPP
 # define IRC_SERVER_HPP
+# define DIE_PASS "partiu"
 
 #include "Channel.hpp"
 #include "Command.hpp"

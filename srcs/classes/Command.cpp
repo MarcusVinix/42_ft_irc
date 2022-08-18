@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Command.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:05:01 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/18 15:38:38 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/18 12:39:00 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -281,13 +281,19 @@ void	Command::commandQuit( void ) {
 	response = ":" + this->_user.getNick() + " QUIT :" + ft::joinSplit(this->_args.begin() + 1, this->_args.end());
 
 	this->_ircServer.messageAllUsers(response);
-	this->_ircServer.deleteUser(this->_user.getFd());
-	if (this->_ircServer.getUsers().size() != 0	&& this->_ircServer.checkOperators() == false) {
-		user = this->_ircServer.getUsers()[0];
-		user->isOper();
-		this->_ircServer.messageToServer(":127.0.0.1 001 all :" + user->getNick() + " is an operator now!", user->getFd());
-		numericResponse("You are worth! Now you became an operator!", "381", user->getFd());
+	std::cout << BRED << "User left: " << RESET << this->_user.getFd() << std::endl;
+	if(this->_user.isOper())
+		this->_user.setOper();
+	if (this->_ircServer.getUsers().size() != 1	&& this->_ircServer.checkOperators() == false) {
+		
+		user = *(this->_ircServer.getUsers().begin() + 1);
+		if (user != NULL) {
+			user->isOper();
+			this->_ircServer.messageToServer(":127.0.0.1 001 all :" + user->getNick() + " is an operator now!", user->getFd());
+			numericResponse("You are worth! Now you became an operator!", "381", user->getFd());
+		}
 	}
+	this->_ircServer.deleteUser(this->_user.getFd());
 
 	return ;
 }
@@ -563,6 +569,7 @@ void	Command::commandKill( void ) {
 	user->receiveMessage(response);
 	response = user->getNick() + " have been killed by " + this->_user.getNick();
 	this->_ircServer.messageToServer(response, user->getFd());
+	std::cout << BRED << "User left: " << RESET << user->getFd() << std::endl;
 	this->_ircServer.deleteUser(user->getFd());
 
 	return ;
@@ -576,6 +583,17 @@ void	Command::commandMode( void ) {
 	return ;
 }
 void	Command::commandDie( void ) {
+
+	if (this->_args.size() != 1)
+		return (numericResponse("usage: /DIE <password>", "461"));
+	if (this->_user.isOper() == false)
+		return (numericResponse("You need be operator to execute the DIE command!", "482"));
+	if (this->_args[0] == DIE_PASS) {
+		this->_ircServer.messageAllUsers(this->_user.getNick() + "close the server, thanks for use!");
+		loop = false;
+	} else {
+		return (numericResponse("You aren't worth to close the server!!", "464"));
+	}
 
 	return ;
 }

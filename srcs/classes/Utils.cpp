@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:34 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/18 14:22:08 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/18 11:44:51 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,8 @@ bool	ft::invalidCharacter( std::string str ) {
 
 }
 
-void	ft::errorMessage( std::string function,	std::string error ) {
+void	ft::errorMessage( std::string function, std::string error ) {
 
-	std::cerr << function << " " << error << std::endl;
-	exit(EXIT_FAILURE);
+	throw std::runtime_error(function + " " + error);
 
 }

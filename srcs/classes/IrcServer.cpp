@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IrcServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/17 12:40:44 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/18 14:22:36 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/18 12:06:50 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ IrcServer::IrcServer( std::string host, std::string port, std::string password )
 }
 
 IrcServer::~IrcServer( void ) {
-
-
 
 	std::vector<User *>::iterator	userIt = this->_usersVec.begin();
 	std::vector<Channel *>::iterator	channelIt = this->_channelsVec.begin();
@@ -39,7 +37,6 @@ IrcServer::~IrcServer( void ) {
 			delete *userIt;
 	}
 	this->_usersVec.clear();
-	std::cout << "Destructor Irc Server" << std::endl;
 
 	return ;
 }
@@ -64,10 +61,12 @@ void	IrcServer::initPoll( void ) {
 		ft::errorMessage("fcntl:", strerror(errno));
 
 	this->_pollFdVec.push_back(pollFd);
-	std::cout << "IrcServer Listen at: \n" <<
-		this->_host << ":" << this->_port << std::endl;
 
-	while (LOOP) {
+	std::cout << BGRN << "/ ***************************************** \\" << std::endl;
+	std::cout << "|    IrcServer Listen at: " << this->_host << ":" << this->_port << "    |" << std::endl;
+	std::cout << "\\ ***************************************** /" << RESET <<std::endl;
+
+	while (loop) {
 		it = this->_pollFdVec.begin();
 		if (poll(&(*it), this->_pollFdVec.size(), 5000) == -1)
 			ft::errorMessage("poll:", strerror(errno));
@@ -296,7 +295,7 @@ void	IrcServer::_createUser( void ) {
 	newUser = new User(userFd);
 	this->_usersVec.push_back(newUser);
 	this->_pollFdVec.push_back(userPollFd);
-	std::cout << "New User: " << userFd << std::endl;
+	std::cout << BBLU << "New User: " << RESET << userFd << std::endl;
 
 	return ;
 
@@ -339,7 +338,6 @@ void	IrcServer::_messageReceived( int fd ) {
 			if (str.find("\n") != std::string::npos) {
 				if (str.size() == 1)
 					str = "/Quit not today!\r\n";
-				std::cout << "fd: " << fd << "  -|" << str << std::endl;
 				Command command(str, fd, *this);
 				break ;
 			}

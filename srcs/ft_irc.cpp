@@ -1,10 +1,17 @@
 #include "IrcServer.hpp"
 
+bool	loop;
+
 void	handle_ctrl_c( int sig ) {
 
 	(void)sig;
-	std::cout << "oi chamou" << std::endl;
-	throw std::exception();
+
+	std::cout << std::endl;
+	std::cout << BGRN << "/ ***************************************** \\" << std::endl;
+	std::cout <<         "|         😎  Thanks for User!!  😎         |" << std::endl;
+	std::cout <<         "\\ ***************************************** /" << RESET <<std::endl;
+
+	throw std::runtime_error("");
 
 }
 
@@ -14,6 +21,7 @@ int	main( int argc, char **argv ) {
 		std::cerr << "usage: ./ircserv <port> <password>" << std::endl;
 		return (1);
 	}
+	loop = true;
 	signal(SIGINT, handle_ctrl_c);
 	try {
 		IrcServer	server(HOST, argv[1], argv[2]);

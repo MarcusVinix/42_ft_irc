@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:05:09 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 15:47:01 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/18 11:47:01 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,6 @@ std::string	Channel::getPassword( void ) {
 }
 
 std::vector<User *>	Channel::getUsers( void ) {
-	std::cout << "Destructor Channel" << std::endl << std::flush;
-
 	return (this->_users);
 }
 
