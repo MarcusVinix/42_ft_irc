@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:05:01 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/18 12:39:00 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/18 16:12:17 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -318,6 +318,8 @@ void	Command::commandJoin( void ) {
 		channel = new Channel(this->_args[0], password);
 		this->_ircServer.addChannel(channel);
 	}
+	if (channel->getUserByNick(this->_user.getNick()) != NULL)
+		return (numericResponse("You already are in this channel!", "443"));
 	if (password == channel->getPassword())
 		this->_user.addChannel(channel);
 	else
