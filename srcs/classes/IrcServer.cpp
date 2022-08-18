@@ -6,7 +6,7 @@
 /*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/17 12:40:44 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 21:49:13 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/18 14:22:36 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,8 +294,6 @@ void	IrcServer::_createUser( void ) {
 		ft::errorMessage("createUser: fcntl:", strerror(errno));
 
 	newUser = new User(userFd);
-	if (this->_usersVec.size() == 0)
-		newUser->setOper();
 	this->_usersVec.push_back(newUser);
 	this->_pollFdVec.push_back(userPollFd);
 	std::cout << "New User: " << userFd << std::endl;
@@ -341,7 +339,7 @@ void	IrcServer::_messageReceived( int fd ) {
 			if (str.find("\n") != std::string::npos) {
 				if (str.size() == 1)
 					str = "/Quit not today!\r\n";
-				std::cout << "fd: " << fd << "  -|" << str << "|"<< std::endl;
+				std::cout << "fd: " << fd << "  -|" << str << std::endl;
 				Command command(str, fd, *this);
 				break ;
 			}

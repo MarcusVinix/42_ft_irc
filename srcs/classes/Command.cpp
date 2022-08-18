@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Command.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:05:01 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 23:18:16 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/18 15:38:38 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,12 @@ void	Command::checkCommand( void ) {
 					commandKick();
 				else if (this->_command == "NAMES")
 					commandNames();
+				else if (this->_command == "KILL")
+					commandKill();
+				else if (this->_command == "MODE")
+					commandMode();
+				else if (this->_command == "DIE")
+					commandDie();
 			}
 			else
 				return (numericResponse("A user must be provide: usage: /USER <username> <hostname> <servername> <realname>", "431"));
@@ -220,7 +226,13 @@ void	Command::commandUser( void ) {
 	this->_user.setServername(this->_args[2]);
 	this->_user.setRealname(this->_args[3]);
 	numericResponse("Welcome to the Barney e Seus Amigos ft_irc server " +
-		this->_user.getNick() + "!" + this->_user.getUsername() + "@" + this->_user.getHostname(), "001");
+		this->_user.getNick() + "! " + this->_user.getUsername() + "@" + this->_user.getHostname(), "001");
+	if (this->_ircServer.checkOperators() == false) {
+		this->_user.setOper();
+		numericResponse("You are worth! Now you became an operator!", "381", this->_user.getFd());
+		this->_ircServer.messageToServer(":127.0.0.1 001 all :" + this->_user.getNick() + " is an operator now!", this->_user.getFd());
+	}
+
 	return ;
 
 }
@@ -270,7 +282,7 @@ void	Command::commandQuit( void ) {
 
 	this->_ircServer.messageAllUsers(response);
 	this->_ircServer.deleteUser(this->_user.getFd());
-	if (this->_ircServer.getUsers().size() != 0	&& !this->_ircServer.checkOperators()) {
+	if (this->_ircServer.getUsers().size() != 0	&& this->_ircServer.checkOperators() == false) {
 		user = this->_ircServer.getUsers()[0];
 		user->isOper();
 		this->_ircServer.messageToServer(":127.0.0.1 001 all :" + user->getNick() + " is an operator now!", user->getFd());
@@ -444,7 +456,6 @@ void	Command::commandWho( void ) {
 		}
 	}
 
-
 	return (numericResponse("END of /WHO list", "315"));
 
 }
@@ -491,11 +502,11 @@ void	Command::commandKick( void ) {
 void	Command::commandHelp( void ) {
 
 	numericResponse("START of /HELP list", "704");
-
-	numericResponse("Commands Avaliable: PASS, QUIT, HELP, PONG, NICK, USER, PRIVMSG, JOIN, OPER, NOTICE, PART, WHO, KICK, NAMES, KILL, DIE, CLOSE ", "705", this->_user.getFd());
-
+	numericResponse("Commands Avaliable:", "705", this->_user.getFd());
+	numericResponse("PASS, QUIT, HELP, PONG, NICK, USER,", "705", this->_user.getFd());
+	numericResponse("PRIVMSG, JOIN, OPER, NOTICE, PART,", "705", this->_user.getFd());
+	numericResponse("WHO, KICK, NAMES, KILL, DIE", "705", this->_user.getFd());
 	numericResponse("To see how to use a command, send: /<command> ", "705", this->_user.getFd());
-
 	numericResponse("END of /HELP list", "706");
 
 	return ;
@@ -529,3 +540,43 @@ void	Command::commandNames( void ) {
 	return ;
 
 }
+
+void	Command::commandKill( void ) {
+
+	User		*user;
+	std::string	msg;
+	std::string	response;
+
+	if (this->_args.size() < 2)
+	 	return (numericResponse("usage: /KILL <user> <comment>", "461"));
+	if (this->_user.isOper() == false)
+		return (numericResponse("You need be operator to kill a user!", "485", this->_user.getFd()));
+	user = this->_ircServer.getUserByNick(this->_args[0]);
+	if (user == NULL)
+		return (numericResponse("The user passed doesn't exist!", "401"));
+
+	msg = ft::joinSplit(this->_args.begin() + 1, this->_args.end());
+	if (msg[0] == ':')
+	 	msg.erase(0, 1);
+
+	response = ":" + this->_user.getNick() + " KILL " + user->getNick() + " . " + msg;
+	user->receiveMessage(response);
+	response = user->getNick() + " have been killed by " + this->_user.getNick();
+	this->_ircServer.messageToServer(response, user->getFd());
+	this->_ircServer.deleteUser(user->getFd());
+
+	return ;
+
+}
+
+void	Command::commandMode( void ) {
+
+	numericResponse("", "324", 0, ft::joinSplit(this->_args.begin(), this->_args.end()));
+
+	return ;
+}
+void	Command::commandDie( void ) {
+
+	return ;
+}
+
