@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Command.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:05:01 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 22:14:04 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 23:18:16 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,8 @@ void	Command::checkCommand( void ) {
 					commandWho();
 				else if (this->_command == "KICK")
 					commandKick();
+				else if (this->_command == "NAMES")
+					commandNames();
 			}
 			else
 				return (numericResponse("A user must be provide: usage: /USER <username> <hostname> <servername> <realname>", "431"));
@@ -488,13 +490,42 @@ void	Command::commandKick( void ) {
 
 void	Command::commandHelp( void ) {
 
-	numericResponse("START of /HELP list", "704"));
+	numericResponse("START of /HELP list", "704");
 
-	numericResponse("Commands Avaliable: PASS, QUIT, HELP, PONG, NICK, USER, PRIVMSG, JOIN, OPER, NOTICE, PART, WHO, KICK, NAMES, KILL, DIE, CLOSE ", "705", this->_user->getFd());
+	numericResponse("Commands Avaliable: PASS, QUIT, HELP, PONG, NICK, USER, PRIVMSG, JOIN, OPER, NOTICE, PART, WHO, KICK, NAMES, KILL, DIE, CLOSE ", "705", this->_user.getFd());
 
-	numericResponse("To see how to use a command, send: /<command> ", "705", this->_user->getFd());
+	numericResponse("To see how to use a command, send: /<command> ", "705", this->_user.getFd());
 
 	numericResponse("END of /HELP list", "706");
 
 	return ;
+}
+
+void	Command::commandNames( void ) {
+
+	Channel								*channel;
+	std::vector<Channel *>				listChannel;
+	std::string							listUsers;
+	std::vector<Channel *>::iterator	it;
+	std::vector<std::string>::iterator	it2;
+
+	if (this->_args[0] == this->_user.getNick())
+		this->_args.erase(this->_args.begin());
+	if (this->_args.size() == 0) {
+		listChannel = this->_ircServer.getChannels();
+		for ( it = listChannel.begin(); it != listChannel.end(); it++)
+			this->_args.push_back((*it)->getName());
+	}
+	for ( it2 = this->_args.begin(); it2 != this->_args.end(); it2++) {
+		channel = this->_ircServer.getChannelByName(*it2);
+		if (channel != NULL) {
+			listUsers = ft::joinSplit(channel->getUsers());
+			if ((*it2)[0] == '#')
+				(*it2).erase(0, 1);
+			numericResponse(listUsers, "353", 0, "= " + *it2);
+			numericResponse("End of /NAMES list", "366", 0, *it2);
+		}
+	}
+	return ;
+
 }

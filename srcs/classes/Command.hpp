@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Command.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Barney e Seus Amigos  <B.S.A@students>     +#+  +:+       +#+        */
+/*   By: Barney e Seus Amigos <B.S.A@student>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 04:04:57 by Barney e Se       #+#    #+#             */
-/*   Updated: 2022/08/17 21:36:59 by Barney e Se      ###   ########.fr       */
+/*   Updated: 2022/08/17 17:20:03 by Barney e Se      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ class Command {
 		void	commandWho( void );
 		void	commandKick( void );
 		void	commandHelp( void );
+		void	commandNames( void );
 
 };
 
